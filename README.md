@@ -9,3 +9,6 @@ CS5150 Project for Symba Intern Management Platform
 
 #### Install all requirements
 `pip install -r requirements.txt`
+
+#### To Add Packages to requirement.txt 
+`pip freeze > requirements.txt`
