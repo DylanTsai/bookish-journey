@@ -44,3 +44,5 @@ con.commit()
 
 # close connection
 con.close()
+
+

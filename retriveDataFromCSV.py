@@ -13,3 +13,4 @@ len(data)
 
 # We should not update CSV files because of the relation, we use update the database using only psycopg2 
 
+
