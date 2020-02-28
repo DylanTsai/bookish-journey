@@ -1,0 +1,22 @@
+project_id,name,description,instructions,status,is_active,is_deleted,created_on,modified_on,created_by,modifeid_by,org,start_date,due_date,is_locked
+6edb3fc1-515c-4127-85fe-746b7f174fbf,NDA,Non-Disclosure Agreement for confidential information pertaining to CARBON and its portfolio companies,"Please fill in, sign, and submit.",1,t,f,2019-08-28 20:17:00.466949+00,,8c23d84f-882b-45ef-9f95-5d620df3a6b7,,d3a1b622-dad0-4350-911d-5dfaab2a8729,8/28/2019,9/15/2019,
+0c5d1ded-8013-4a83-840e-0c9a89711015,Scrub Infosec Lead List,"We just got back the final list of booth leads from Infosec Europe. We need to scrub them according to the List Upload rules, like you did last week with the Alacrinet leads.
+
+Any leads that you scrub out should be put into a different tab/sheet (.csv files don''t do multiple tabs so either save it as a .xlsx first or have two separate .csv files)","1. Have one person start from the top of the list and the other person start from the bottom.
+2. Review the lead information. You do not need to add anything from Discoverorg.
+3. If you find a lead that should be removed, put it in a separate tab/sheet as these will be sent back to the Europe team for review.*
+
+*Direct Quote from our Europe team: 'Do not alter the file. Whatever data you will “scrub/delete” put it aside on a separate tab – the EMEA VP wants to see what we are eliminating.'""""",1,t,f,2019-06-11 19:29:58.010123+00,,15189d5b-f098-48eb-9949-6688ea392f1e,,2a900058-8e8a-4ed9-a933-3c7dd024e281,6/11/2019,6/12/2019,t
+3f8e2d68-10f9-4fba-b900-10882b2d9c21,Set Up Google AdWords Campaign,Test,,1,t,f,2018-09-27 03:02:43.67613+00,,6a80202b-718a-40f7-8cfb-fcc36c264b1a,,8448ff33-37a5-458e-875e-07088484527c,10/1/2018,12/31/2018,
+f5814285-7324-4fa5-8f61-e59e35d7058c,Submit YC W19 Application,Submit your completed application and both founders' profiles.,"1. Visit https://ycombinator.com/apply/
+2. Fill out the application
+3. Submit!",1,t,f,2018-10-02 02:01:14.561402+00,,c8b9d0d7-7ab7-459a-a5da-34ec7a2053d1,,8448ff33-37a5-458e-875e-07088484527c,9/26/2018,10/2/2018,
+cc661298-4768-4fa6-b6d6-00d682e48654,GoAskLee [Michelle],This is a test project,,1,t,f,2018-09-17 22:23:35.389693+00,,006be4f2-2fea-49c7-b3a6-84547188d236,,7f284f71-c508-4ef3-87cb-54b294333d6f,9/17/2018,9/30/2018,
+171e41a3-7b22-4467-a07e-91059b08be30,Local News Outreach,Land local press in areas of institutions we have success stories with.,#NAME?,1,t,f,2018-09-24 23:06:34.376275+00,,1a751175-860f-40dd-8f60-5db5662a12c1,,2419d0f6-ac8e-436a-a6ee-60b9552b796c,9/17/2018,11/17/2018,
+911fd3e7-ecb5-415e-bc37-2c8f131c964d,Submit Winter 2019 Application,Make sure it is clear why yours is amazing and why you are the team to win in your market.,"1. Visit https://www.eranyc.com/apply/
+2. Fill out Application
+3. Submit",1,t,f,2018-10-04 19:01:43.404869+00,,28311cd7-53c8-479d-91f3-206b3b0baec5,,8448ff33-37a5-458e-875e-07088484527c,10/1/2018,10/9/2018,
+1222fdaf-9934-4f76-9084-d7bd09494246,Website Creation,Make me a website on cryptocurrencies and blockchain ,"1. create wireframes
+2. start designs
+3. start development!",1,t,f,2018-09-26 15:07:51.893278+00,,6c01d9ab-be46-4aa5-bf7f-889bc68daf30,,8448ff33-37a5-458e-875e-07088484527c,9/27/2018,10/3/2018,
+81a1dc37-3c94-497a-ae3a-1e033fc6b85b,Post on Instagram,Please post screenshots of all of your insta posts,1. Input screenshot,1,t,f,2018-10-08 18:27:00.214352+00,,28311cd7-53c8-479d-91f3-206b3b0baec5,,8448ff33-37a5-458e-875e-07088484527c,10/9/2018,10/15/2018,

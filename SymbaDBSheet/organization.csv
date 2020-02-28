@@ -1,0 +1,10 @@
+org_id,name,adminpersonname,adminemail_id,logo_url,admin_Id,accounttype,alloweddomainname,allowedipaddress,is_active,is_deleted,created_on,modified_on,created_by,modifeid_by
+a6f93a51-5415-4d63-a40a-a35c374c05ba,ABC Limited,jk,ba2@.com,t/t/t,1,locl,12.112.12,Flat no 37 Vansh Apatment Fajilpur Jharsa,t,f,2018-06-20 16:22:26+00,2018-06-20 16:22:30+00,,
+41ea88e6-dd07-4059-b66a-9f23cf7ee31b,Students Rising Above,,,https://symba-documentbucket.s3.amazonaws.com/logo/SRA_logo_original (1).jpg,,,,,t,t,2019-05-15 01:40:20.251583+00,,40d31bfe-5297-46d6-9f27-995066b5a2ce,
+8ee46c56-da09-47fb-a02f-f80fb6d7bbad,Students Rising Above,,,https://symba-documentbucket.s3.amazonaws.com/logo/SRA_logo_original (1).jpg,,,,,t,f,2019-05-15 01:41:19.533885+00,,40d31bfe-5297-46d6-9f27-995066b5a2ce,
+8448ff33-37a5-458e-875e-07088484527c,Symba,Nikita Gupta,nikita@symba.io,https://symba-documentbucket.s3.amazonaws.com/logo/symba_square.png,,,,,f,f,2018-09-20 13:28:51+00,,,
+d3a1b622-dad0-4350-911d-5dfaab2a8729,CAЯBON,,,https://symba-documentbucket.s3.amazonaws.com/logo/Screen Shot 2019-07-09 at 7.50.46 PM.png,,,,,t,f,2019-07-10 00:51:43.453894+00,2019-08-26 21:50:39.98+00,40d31bfe-5297-46d6-9f27-995066b5a2ce,40d31bfe-5297-46d6-9f27-995066b5a2ce
+5af7913b-6c5d-4e94-802e-0c17f5d40cfd,Acceleprise,,,https://symba-documentbucket.s3.amazonaws.com/logo/accel logo.png,,,,,t,f,2019-08-28 20:12:00.891859+00,,40d31bfe-5297-46d6-9f27-995066b5a2ce,
+da90ee0a-281f-457b-9e89-764ca3827a68,Symba Freelancers,,,https://symba-documentbucket.s3.amazonaws.com/logo/symba_square_clear.png,,,,,t,f,2019-10-07 15:20:33.932717+00,,40d31bfe-5297-46d6-9f27-995066b5a2ce,
+fd91e4e4-0036-4c63-8b21-70773bf2a7a3,Salesforce,,,https://symba-documentbucket.s3.amazonaws.com/logo/Salesforce_logo.png,,,,,t,f,2019-12-06 17:52:13.726417+00,,40d31bfe-5297-46d6-9f27-995066b5a2ce,
+f4e2af29-65fe-4b5d-8069-2bb6f11a6ce1,Cornell CS 5150,,,https://symba-documentbucket.s3.amazonaws.com/logo/Cornell logo.png,,,,,t,f,2020-02-03 21:10:49.020491+00,,40d31bfe-5297-46d6-9f27-995066b5a2ce,

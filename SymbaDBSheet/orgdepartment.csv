@@ -1,0 +1,10 @@
+department_id,departmentdesc,address1,address2,address3,is_active,is_deleted ,created_on,modified_on,city,country,created_by,modifeid_by,org,state
+b3d8c534-2452-4e92-8515-51d44e54cd52,Sales,USA,,,t,t,2018-08-30 13:29:48+00,,,,1513fa97-5297-43f2-9d32-77672c07fb8f,,a6f93a51-5415-4d63-a40a-a35c374c05ba,
+424855cf-f931-4b5b-af4b-4899e1237c9f,Marketing,USA,,,t,f,2018-08-30 13:30:26+00,,,,1513fa97-5297-43f2-9d32-77672c07fb8f,,a6f93a51-5415-4d63-a40a-a35c374c05ba,
+d4b294fa-d4af-4be6-a66f-ef741e2fe61f,Operations,USA,,,t,f,2018-08-30 13:33:01+00,,,,1513fa97-5297-43f2-9d32-77672c07fb8f,,a6f93a51-5415-4d63-a40a-a35c374c05ba,
+762e2cf1-4e6b-489d-acb5-cbde08ce8bb1,Student Ambassador Program,,,,t,t,2019-10-01 21:09:34.437658+00,,,,40d31bfe-5297-46d6-9f27-995066b5a2ce,,fc9b6a32-a94d-42f6-aa05-3e492a6e0159,
+848c3f82-85e9-4790-93c3-0871462fa6ff,College Marketing Team,,,,t,t,2018-10-12 16:28:19+00,,,,,,fc9b6a32-a94d-42f6-aa05-3e492a6e0159,
+a545d52b-d8ae-4c6c-a1a5-c837c7344da2,Student Ambassador,,,,t,f,2019-10-01 21:14:14.55013+00,,,,40d31bfe-5297-46d6-9f27-995066b5a2ce,,a41c409e-3cd1-4c7c-96a4-f868d6a65d10,
+e227accb-df49-4350-a538-41db84173804,Freelancer,,,,t,f,2019-10-07 15:20:53.733537+00,,,,40d31bfe-5297-46d6-9f27-995066b5a2ce,,da90ee0a-281f-457b-9e89-764ca3827a68,
+c8dd36f6-bb29-4011-bc71-23885ad2a1e4,Business Value Services,,,,t,f,2019-12-06 17:52:39.470282+00,,,,40d31bfe-5297-46d6-9f27-995066b5a2ce,,fd91e4e4-0036-4c63-8b21-70773bf2a7a3,
+264c267a-db49-47bf-92f5-5bc0868030be,Symba CS5150,,,,t,f,2020-02-03 21:11:12.625451+00,,,,40d31bfe-5297-46d6-9f27-995066b5a2ce,,f4e2af29-65fe-4b5d-8069-2bb6f11a6ce1,
