@@ -1,4 +1,4 @@
- CREATE TABLE public."SymbaApi_city" (
+CREATE TABLE public."SymbaApi_city" (
     city_id uuid NOT NULL,
     name character varying(50),
     code character varying(50),
