@@ -7,8 +7,11 @@ CS5150 Project for Symba Intern Management Platform
 #### Activate the environment
 `source symba_env/bin/activate`
 
-#### Install all requirements
+#### Install all Python requirements
 `pip install -r requirements.txt`
+
+#### Install all node requirements
+`./node-requirements.sh`
 
 #### To Add Packages to requirement.txt 
 `pip freeze > requirements.txt`
