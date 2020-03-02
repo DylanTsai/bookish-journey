@@ -20,6 +20,14 @@
   {% if note %} 
   <p>{{note}}</p>
   {% endif %}
- 
+  <div id="static-react-test">react goes here?</div>
+{#  <script>
+function buttontest(el) {
+  console.log("rawr");
+}
+</script> #}
+  <button type="button" onclick="buttontest(this)">Click Me!</button>
+  <div id="stateful-react-test">react goes here?</div>
 </body>
+  <script src="dist/bundle.js" type="text/javascript"></script>
 </html>
