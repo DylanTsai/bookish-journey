@@ -1,6 +1,7 @@
 from flask import Flask, request, render_template
 from flask import current_app, g
 import connectToDB
+from psycopg2 import errors as pg_errors
 
 app = Flask(__name__,
   static_folder="static/dist",
@@ -31,22 +32,24 @@ def test_SymbaApi_country_col():
       Select * FROM public."{table}" LIMIT 0;
   """)
   colnames = [desc[0] for desc in cur.description]
-  cur.close() 
-
-  return str(colnames)
+  cur.close()
+  return ",".join(colnames)
 
 @app.route('/testRetrieveColFromCountry', methods=['GET'])
 def test_SymbaApi_country_col_yeah():
-  col= request.args['col']
+  col= request.args.get('col')
   engine = connectToDB.get_db()
   cur = engine.cursor()
-
-  cur.execute("select "+col+" from public.\"SymbaApi_country\"")
+  try:
+    cur.execute("select "+col+" from public.\"SymbaApi_country\"")
+  except pg_errors.UndefinedColumn:
+    return ""
   rows = cur.fetchall()
-  res = ""
+  res = []
   for r in rows:
-      res += r[0] +'<br/>'
-  print(res)
+    if len(r) > 0:
+      res.append(r[0])
+  res = ",".join(res)
   cur.close()
   return res
 
