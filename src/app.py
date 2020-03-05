@@ -20,21 +20,22 @@ def response():
     return render_template("index.html", name=fname, note=note) 
 
 
-@app.route('/testRetrieveColFromSymbaApi_country')
+@app.route('/getColNames', methods=['GET'])
 def test_SymbaApi_country_col():
   # you'll get a parameter from the person who goes to the website
   # it'll look somethinglike /testRetrieveColFromSymbaApi_country?col='colname'
+  table = request.args['table']
   engine = connectToDB.get_db()
   cur = engine.cursor()
-  cur.execute("""
-      Select * FROM public."SymbaApi_country" LIMIT 0;
-      """)
+  cur.execute(f"""
+      Select * FROM public."{table}" LIMIT 0;
+  """)
   colnames = [desc[0] for desc in cur.description]
   cur.close() 
 
   return str(colnames)
 
-@app.route('/testRetrieveColFromSymbaApi_country_withinput', methods=['GET'])
+@app.route('/testRetrieveColFromCountry', methods=['GET'])
 def test_SymbaApi_country_col_yeah():
   col= request.args['col']
   engine = connectToDB.get_db()
