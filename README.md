@@ -25,9 +25,9 @@ All HTML files need to be in src/templates/ and all Javascript and CSS files nee
 
 Also for database visualization, download TablePlus and connect with the following specs:  
 
-Name: MyDatabase
-Host/Socket: symbatest.c3uotbqk2qpa.us-east-2.rds.amazonaws.com  
+Name: MyDatabase  
+Host/Socket: symbatest.c3uotbqk2qpa.us-east-2.rds.amazonaws.com   
 Port: 5432  
-User: masterusername  
+User: masterusername   
 Pass: masterpassword  
 Database: postgres  
