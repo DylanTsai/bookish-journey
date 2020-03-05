@@ -5,29 +5,49 @@ import psycopg2
 
 # connect to a postgres dababase
 con = psycopg2.connect(
-        host = "localhost",
-        port = "5432",
-        database = "tang",
-        user = "postgres",
-        password = "")
+    database = "postgres",
+
+    host = "symbatest.c3uotbqk2qpa.us-east-2.rds.amazonaws.com",
+    port = "5432",
+    
+    user = "masterusername",
+    password = "masterpassword")
+
 
 # cursor to feed commands
 cur = con.cursor()
+
+cur.execute("""CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+    """)
+
+cur.execute("""
+    create TABLE public."SymbaApi_country" (
+    country_id uuid NOT NULL,
+    name character varying(50) NOT NULL,
+    code character varying(50),
+    description character varying(100),
+    is_active boolean NOT NULL,
+    is_deleted boolean NOT NULL,
+    created_on timestamp with time zone NOT NULL,
+    modified_on timestamp with time zone,
+    created_by uuid,
+    modifeid_by uuid);
+    """)
 
 # update/insert data as in sql
 cur.execute(""" 
     insert into "SymbaApi_country" 
     (country_id,name,code,description,is_active,is_deleted,created_on,modified_on) 
     values 
-    (uuid_generate_v4(),'China','CHN', 'added country', 't','f',DATE '2020-02-20',DATE '2020-02-20');   """
-    )
+    (uuid_generate_v4(),'China','CHN', 'added country', 't','f',DATE '2020-02-20',DATE '2020-02-20');   
+    """)
 
 cur.execute(""" 
     insert into "SymbaApi_country" 
     (country_id,name,code,description,is_active,is_deleted,created_on,modified_on) 
     values 
-    (uuid_generate_v4(),'United States','USA', 'added country', 't','f',DATE '2020-02-20',DATE '2020-02-20');   """
-    )
+    (uuid_generate_v4(),'United States','USA', 'added country', 't','f',DATE '2020-02-20',DATE '2020-02-20');   
+    """)
 
 
 # retrieve data
