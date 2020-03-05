@@ -22,3 +22,12 @@ To deploy locally, active the python environment, install any Python or NodeJS r
 Run `npm run watch` in /src/static to transpile files in real-time. Run this in the background, or in a separate terminal. Alternatively, run `node run build` to do one-time transpilation.
 Note that we are using jinja, so HTML comments are formatted as `{# comment #}`.
 All HTML files need to be in src/templates/ and all Javascript and CSS files need to be in src/static/.
+
+Also for database visualization, download TablePlus and connect with the following specs:  
+
+Name: MyDatabase
+Host/Socket: symbatest.c3uotbqk2qpa.us-east-2.rds.amazonaws.com  
+Port: 5432  
+User: masterusername  
+Pass: masterpassword  
+Database: postgres  
