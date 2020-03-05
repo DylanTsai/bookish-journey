@@ -23,6 +23,7 @@ Run `npm run watch` in /src/static to transpile files in real-time. Run this in 
 Note that we are using jinja, so HTML comments are formatted as `{# comment #}`.
 All HTML files need to be in src/templates/ and all Javascript and CSS files need to be in src/static/.
 All javascript files need to have the line `import regeneratorRuntime from "regenerator-runtime"`.
+Make sure that all javascript files are (transitively) imported by a file listed in `entry` in `webpack.config.js.
 
 For database visualization, download TablePlus and connect with the following specs:
 Name: MyDatabase  

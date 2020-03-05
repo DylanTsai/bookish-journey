@@ -1,23 +1,11 @@
 // For dashboard React and jsx. Any sizeable React components 
-// should go inside modules and be imported here.
+// should go in different files and then be imported here.
 
 import React from "react";
-import ReactDOM from "react-dom";
 import PropTypes from 'prop-types';
-import regeneratorRuntime from "regenerator-runtime"; // you need to keep this!
-import { timingSafeEqual } from "crypto";
-
-// TODO put this in separate (utilities) file
-function makeUrl(url, params) {
-  let url_obj = new URL(url);
-  if (params) {
-    Object.keys(params).forEach(key => url_obj.searchParams.append(key, params[key]))
-    // params.forEach(p => url_obj.searchParams.set(p.key, p.value));
-  }
-  return url_obj;
-}
-
-let BASE_URL = "http://localhost:5000/" // TODO put this in shared (constants) file
+import regeneratorRuntime from "regenerator-runtime"; // NOTE: we need to keep this here!
+import * as consts from './constantsDashboard';
+import { makeUrl } from './dbUtils';
 
 class privateVar {
   constructor(init) {
@@ -66,7 +54,7 @@ TextInput.propTypes = {
   inputCallback: PropTypes.func
 }
 
-class FetchTester extends React.Component {
+export class FetchTester extends React.Component {
   columns = [];
   data = [];
   inputColName = "";
@@ -77,7 +65,7 @@ class FetchTester extends React.Component {
       fetching: true,
       last_run: null
     };
-    let col_name_url = BASE_URL + "getColNames"
+    let col_name_url = consts.BASE_URL + "getColNames"
     let col_name_params = { table: "SymbaApi_country" }
     fetch(makeUrl(col_name_url, col_name_params)).then(
       (resp) => resp.text()
@@ -101,7 +89,7 @@ class FetchTester extends React.Component {
       fetching: true,
       last_run: null
     })
-    let country_col_url = BASE_URL + "testRetrieveColFromCountry"
+    let country_col_url = consts.BASE_URL + "testRetrieveColFromCountry"
     let country_col_params = { col: colName }
     let resp = await fetch(makeUrl(country_col_url, country_col_params));
     let txt = await resp.text()
@@ -127,11 +115,7 @@ class FetchTester extends React.Component {
       Get Column Data
     </button>;
     let col_textInput = <TextInput id="col-text-input"
-      inputCallback={
-        (newTxt) => {
-          this.inputColName = newTxt;
-        }
-      }
+      inputCallback={(newTxt) => { this.inputColName = newTxt; }}
     />;
     let dataContainer = null
     if (this.state.fetching) {
@@ -167,7 +151,7 @@ class FetchTester extends React.Component {
   }
 }
 
-class LikeButton extends React.Component {
+export class LikeButton extends React.Component {
 
   constructor(props) {
     super(props);
@@ -184,5 +168,5 @@ class LikeButton extends React.Component {
 }
 
 
-ReactDOM.render(<FetchTester />, document.getElementById("fetch-tester"));
-ReactDOM.render(<LikeButton />, document.getElementById("stateful-react-test"));
+// ReactDOM.render(<FetchTester />, document.getElementById("fetch-tester"));
+// ReactDOM.render(<LikeButton />, document.getElementById("simple-react-test"));
