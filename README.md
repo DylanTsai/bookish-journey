@@ -22,3 +22,4 @@ To deploy locally, active the python environment, install any Python or NodeJS r
 Run `npm run watch` in /src/static to transpile files in real-time. Run this in the background, or in a separate terminal. Alternatively, run `node run build` to do one-time transpilation.
 Note that we are using jinja, so HTML comments are formatted as `{# comment #}`.
 All HTML files need to be in src/templates/ and all Javascript and CSS files need to be in src/static/.
+All javascript files need to have the line `import regeneratorRuntime from "regenerator-runtime"`.
