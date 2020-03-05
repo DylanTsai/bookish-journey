@@ -1,5 +1,6 @@
 from flask import Flask, request, render_template
-
+from flask import current_app, g
+import connectToDB
 
 app = Flask(__name__,
   static_folder="static/dist",
@@ -22,8 +23,31 @@ def response():
 @app.route('/testRetrieveColFromSymbaApi_country')
 def test_SymbaApi_country_col():
   # you'll get a parameter from the person who goes to the website
-  # it'll look something like /testRetrieveColFromSymbaApi_country?col='colname'
-  pass
-  return "the column, comma-separated"
+  # it'll look somethinglike /testRetrieveColFromSymbaApi_country?col='colname'
+  engine = connectToDB.get_db()
+  cur = engine.cursor()
+  cur.execute("""
+      Select * FROM public."SymbaApi_country" LIMIT 0;
+      """)
+  colnames = [desc[0] for desc in cur.description]
+  cur.close() 
+
+  return str(colnames)
+
+@app.route('/testRetrieveColFromSymbaApi_country_withinput', methods=['GET'])
+def test_SymbaApi_country_col_yeah():
+  col= request.args['col']
+  engine = connectToDB.get_db()
+  cur = engine.cursor()
+
+  cur.execute("select "+col+" from public.\"SymbaApi_country\"")
+  rows = cur.fetchall()
+  res = ""
+  for r in rows:
+      res += r[0] +'<br/>'
+  print(res)
+  cur.close()
+  return res
+
 
 if __name__ == '__main__': app.run(host="0.0.0.0", port=5000)
