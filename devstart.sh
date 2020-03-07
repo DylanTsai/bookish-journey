@@ -60,32 +60,15 @@ function carriage_to_newline() {
 chmod 777 $fswatch_log
 chmod 777 $repoSrcDir/src/app.py
 
-# function do_mypy_on_fswatch() {
-#   unbuffer mypy src 2>&1 | tee -a $mypy_buf $mypy_output > /dev/null
-# }
-
-  # unbuffer mypy **/*.py 2>&1  | tee -a $mypy_buf $mypy_output > /dev/null
 function mypy_watch() {
   while true
   do
-   # unbuffer mypy **/*.py 2>&1  | tee -a $mypy_buf $mypy_output > /dev/null
-   #    fswatch -i *.py -0 src | xargs -0 -n1 -I{} unbuffer mypy src >&1 | tee -a $mypy_buf $mypy_output > /dev/null
-    # fswatch -i *.py -0 src 
     fswatch -i *.py -0 -o --event PlatformSpecific src | xargs -0 -n1 -I{} unbuffer mypy src 2>&1 | tee -a $mypy_buf $mypy_output > /dev/null
-    # fd=`$(fswatch -1 src) 2>> $fswatch_log`
-    # fd=`$(unbuffer fswatch -1 . **/*.py) 2> $fswatch_log`
-    # if [ -f "$fd" ]
-    # then
-
-    #   # unbuffer mypy **/*.py 2>&1  | tee -a $mypy_buf $mypy_output > /dev/null
-    #   unbuffer mypy $fd 2>&1 | tee -a $mypy_buf $mypy_output > /dev/null
-    # fi
   done
 }
 
 function restart_flask() {
   cd $repoSrcDir/src
-  # kill $flask_pid &> /dev/null # it's okay if $flask_pid is empty; nothing happens
   kill $(ps aux | grep 'python3 app.py' | awk '{print $2}') &> /dev/null
   python3 app.py |& tee -a $flask_buf $flask_output &> /dev/null &
   flask_pid="$!"
@@ -122,8 +105,6 @@ function run() {
   > $mypy_buf
   > $fswatch_log
 
-  # unbuffer mypy **/*.py 2>&1  | tee -a $mypy_buf $mypy_output > /dev/null
-
   mypy_watch &
   mypy_pid="$!"
   start_babel
@@ -143,7 +124,7 @@ function run() {
     else
       IFS= read -r -t 1 -N 1 user_input
     fi
-    if [[ `cat $babel_buf` = *[![:space:]]* ]] #[[ `cat $babel_buf` =~ ^\ +$ ]]
+    if [[ `cat $babel_buf` = *[![:space:]]* ]]
     then
       echo_header 'babel' '\033[0;35m'
       while true
