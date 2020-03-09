@@ -6,53 +6,7 @@ import PropTypes from 'prop-types';
 import regeneratorRuntime from "regenerator-runtime"; // NOTE: we need to keep this here!
 import * as consts from './constantsDashboard';
 import { makeUrl } from './dbUtils';
-
-class privateVar {
-  constructor(init) {
-    this._data = init;
-  }
-
-  get data() {
-    return this._data;
-  }
-
-  set data(newData) {
-    this._data = newData;
-  }
-}
-
-class TextInput extends React.Component {
-  constructor(props) {
-    super(props);
-    this._text = new privateVar("");
-  }
-
-  get text() {
-    return this._text;
-  }
-
-  isEmpty() {
-    return this._text.length = 0;
-  }
-
-  render() {
-    let updateText = (s) => { this._text = s };
-    let full_onchange_callback = (event) => {
-      let newText = event.target.value
-      updateText(newText);
-      this.props.inputCallback(newText);
-    }
-    return <input
-      type="text" id={this.props.id}
-      onChange={full_onchange_callback.bind(this)}
-    />;
-  }
-}
-
-TextInput.propTypes = {
-  id: PropTypes.string.isRequired,
-  inputCallback: PropTypes.func
-}
+import { TextInput } from './optionSearchBox';
 
 export class FetchTester extends React.Component {
   columns = [];
@@ -166,7 +120,3 @@ export class LikeButton extends React.Component {
     );
   }
 }
-
-
-// ReactDOM.render(<FetchTester />, document.getElementById("fetch-tester"));
-// ReactDOM.render(<LikeButton />, document.getElementById("simple-react-test"));

@@ -1,3 +1,6 @@
+import os,sys
+sys.path.insert(1, os.path.join(os.path.dirname(__file__),'database'))
+
 from flask import Flask, request, render_template
 from flask import current_app, g
 import connectToDB
