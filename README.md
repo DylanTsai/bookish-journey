@@ -14,7 +14,7 @@ If you do not have virtualenv, you will need to run `pip3 install virtualenv`.
 
 #### Install all Python requirements
 `pip install -r requirements.txt`
-If you receive an error message including `ld: library not found for -lssl` while installing psycopg2, and you are on MacOSX, run `code-select --install` and then run _______.
+If you receive an error message including `ld: library not found for -lssl` while installing psycopg2, and you are on MacOSX, run `xcode-select --install` and then run `env LDFLAGS="-I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib" pip --no-cache install psycopg2`.
 
 #### To Add Packages to requirement.txt 
 `pip freeze > requirements.txt`
