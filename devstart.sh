@@ -4,9 +4,9 @@
 Requirements:
 - Bash 4+
 - OSX
-- fswatch
-- unbuffer
-- gnu-sed
+- fswatch (available on brew)
+- unbuffer (available on brew via `brew install expect`)
+- gnu-sed (available on brew)
 
 Lots of commands are spawned in the background and aren't properly cleaned up on 
 exit, so please quit by pressing 'q'. If you do quit through some other way,
@@ -224,6 +224,7 @@ function run() {
   kill $(ps aux | grep 'xargs -0 -n1 -I{} unbuffer mypy src' | awk '{print $2}') &> /dev/null
   kill $(ps aux | grep 'unbuffer mypy **/*.py' | awk '{print $2}') &> /dev/null
   kill $(ps aux | grep 'fswatch -i .* src' | awk '{print $2}') &> /dev/null
+  cd $repoSrcDir
   deactivate
   kill $(ps aux | grep 'devstart' | awk '{print $2}') &> /dev/null
 }
