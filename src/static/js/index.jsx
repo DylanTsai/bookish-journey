@@ -1,4 +1,5 @@
-// For dashboard React and jsx. Any sizeable React components 
+// TODO rename this file to be specific to the appropriate page
+// React and jsx. Any sizeable React components 
 // should go in different files and then be imported here.
 
 import React from "react";
