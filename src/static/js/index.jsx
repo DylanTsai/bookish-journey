@@ -5,7 +5,7 @@
 import React from "react";
 import PropTypes from 'prop-types';
 import regeneratorRuntime from "regenerator-runtime"; // NOTE: we need to keep this here!
-import * as consts from './constantsDashboard';
+import * as consts from './constants';
 import { makeUrl } from './dbUtils';
 import { TextInput } from './optionSearchBox';
 
