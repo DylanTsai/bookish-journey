@@ -1,11 +1,12 @@
 const webpack = require('webpack');
 const config = {
-    entry: [
-        __dirname + '/js/app.js'
-    ],
+    entry: {
+	// TODO: Add a line here for every source file created
+        index: __dirname + '/js/app.js'
+    },
     output: {
         path: __dirname + '/dist',
-        filename: 'bundle.js',
+        filename: '[name].bundle.js',
     },
     resolve: {
         extensions: ['.ts', '.tsx', '.js', '.jsx', '.css']
