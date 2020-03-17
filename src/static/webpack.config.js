@@ -1,8 +1,9 @@
 const webpack = require('webpack');
 const config = {
-    entry: [
-        __dirname + '/js/app.js'
-    ],
+    entry: {
+        test: __dirname + '/js/test.js',
+        createPassword: __dirname + '/js/createPassword.tsx'
+    },
     output: {
         path: __dirname + '/dist',
         filename: 'bundle.js',
@@ -13,7 +14,7 @@ const config = {
     module: {
         rules: [
             {
-                test: /\.(js|jsx)$/,
+                test: /\.(ts|tsx|js|jsx)$/,
                 exclude: /node_modules/,
                 use: {
                     loader: "babel-loader"
