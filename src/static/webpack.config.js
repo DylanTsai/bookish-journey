@@ -8,7 +8,7 @@ const config = {
         filename: 'bundle.js',
     },
     resolve: {
-        extensions: ['.js', '.jsx', '.css']
+        extensions: ['.ts', '.tsx', '.js', '.jsx', '.css']
     },
     module: {
         rules: [
