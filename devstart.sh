@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-echo $BASH_VERSION
 
 : <<'long_comment'
 Requirements:
@@ -25,7 +24,6 @@ flask_pid=""
 babel_pid=""
 
 repoSrcDir="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
-#$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )
 
 mypy_buf="$repoSrcDir/.devstartlogs/mypy_buf"
 flask_buf="$repoSrcDir/.devstartlogs/flask_buf"
@@ -51,16 +49,6 @@ function print_help() {
 function carriage_to_newline() {
   perl -pi -e 's/\r/\n/g' $1
 }
-
-
-# function clear_format() {
-#   gsed_str="s/\x1B\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK]//g"
-#   gsed -r $gsed_str $1 | tr $'\r' $'\n' >clear_formatting_temp && mv clear_formatting_temp $1
-#   # gsed -ri "s/[[:cntrl:]]\[[0-9]{1,3}m//g" $1
-# }
-
-chmod 777 $fswatch_log
-chmod 777 $repoSrcDir/src/app.py
 
 function mypy_watch() {
   while true
