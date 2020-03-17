@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+echo $BASH_VERSION
+
 : <<'long_comment'
 Requirements:
 - Bash 4+
@@ -25,13 +27,13 @@ babel_pid=""
 repoSrcDir="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 #$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )
 
-mypy_buf=$repoSrcDir/.devstartlogs/mypy_buf
-flask_buf=$repoSrcDir/.devstartlogs/flask_buf
-babel_buf=$repoSrcDir/.devstartlogs/babel_buf
-mypy_output=$repoSrcDir/.devstartlogs/mypy.log
-flask_output=$repoSrcDir/.devstartlogs/flask.log
-babel_output=$repoSrcDir/.devstartlogs/babel.log
-fswatch_log=$repoSrcDir/.devstartlogs/fswatch.log
+mypy_buf="$repoSrcDir/.devstartlogs/mypy_buf"
+flask_buf="$repoSrcDir/.devstartlogs/flask_buf"
+babel_buf="$repoSrcDir/.devstartlogs/babel_buf"
+mypy_output="$repoSrcDir/.devstartlogs/mypy.log"
+flask_output="$repoSrcDir/.devstartlogs/flask.log"
+babel_output="$repoSrcDir/.devstartlogs/babel.log"
+fswatch_log="$repoSrcDir/.devstartlogs/fswatch.log"
 
 function print_help() {
   echo -e "\n\n"
