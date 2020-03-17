@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Route, BrowserRouter as Router, useParams } from 'react-router-dom';
+import { Route, BrowserRouter as Router } from 'react-router-dom';
 import { ValidatedTextInputMonitor, ValidationResults } from './textUtils';
 import styleConsts from '../styles/constants.css';
 
