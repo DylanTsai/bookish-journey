@@ -6,3 +6,5 @@ src/static/dist
 .devstartlogs/ 
 **/*.log
 .mypy_cache/
+.vscode/
+**/*.d.ts
