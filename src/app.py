@@ -15,13 +15,17 @@ app = Flask(__name__,
 
 @app.route('/')
 def hello():
-    return render_template("index.html")
+    return render_template("test.html")
+
+@app.route('/create-password/<string:email>')
+def createPassword(email: str):
+    return render_template("createPassword.html",email=email)
 
 @app.route('/response', methods=['POST'])
 def response():
     fname = request.form.get("fname")
     note = request.form.get("note") 
-    return render_template("index.html", name=fname, note=note) 
+    return render_template("test.html", name=fname, note=note) 
 
 
 @app.route('/getColNames', methods=['GET'])

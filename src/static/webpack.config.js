@@ -1,13 +1,9 @@
 const webpack = require('webpack');
 const config = {
     entry: {
-<<<<<<< HEAD
+        // TODO: Add a line here for every source file created
         test: __dirname + '/js/test.js',
         createPassword: __dirname + '/js/createPassword.tsx'
-=======
-	// TODO: Add a line here for every source file created
-        index: __dirname + '/js/app.js'
->>>>>>> 969898a1215873a414143c2629469e40db264d44
     },
     output: {
         path: __dirname + '/dist',
@@ -24,6 +20,16 @@ const config = {
                 use: {
                     loader: "babel-loader"
                 }
+            },
+            {
+                test: /\.css$/,
+                exclude: /node_modules/,
+                use: [
+                    { loader: "style-loader" },
+                    { loader: "@teamsupercell/typings-for-css-modules-loader" },
+                    { loader: "css-modules-typescript-loader" },
+                    { loader: "css-loader", options: { modules: true } }
+                ]
             }
         ]
     }

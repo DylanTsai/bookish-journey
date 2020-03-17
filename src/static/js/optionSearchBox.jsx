@@ -2,9 +2,6 @@ import React from "react";
 import PropTypes from 'prop-types';
 import regeneratorRuntime from "regenerator-runtime"; // NOTE: we need to keep this here!
 
-/**
- * TODO: select options
- */
 export class TextInput extends React.Component {
   constructor(props) {
     super(props);
@@ -27,6 +24,7 @@ export class TextInput extends React.Component {
       if (newText == "" && this.props.onEmptyCallback) {
         this.props.onEmptyCallback()
       } else {
+        console.log(this.props.onChange);
         this.props.onChange(newText);
       }
       console.log("finished updating text: " + event.target.value)
@@ -119,7 +117,7 @@ class OptionSearchBox extends React.Component {
       options: newOptions,
       selection: this.state.selection
     })
-    console.log(this.state.options)
+    console.log(`options: ${this.state.options}`)
   }
 
   onSelect(selectionValue) {
@@ -204,37 +202,38 @@ export class SkillSearchBox extends React.Component {
 
   constructor(props) {
     super(props);
-    this.getAndCacheOptions.bind(this);
+    this.getAndCacheSkills.bind(this);
     this.state = {
       ready: false
     }
-    this.fetchAllFromDb().then(
-      () => {
+    this.fetchAllSkills().then(
+      (allSkills) => {
+        this.skillsCache[""] = allSkills;
         this.setState({ ready: true })
       }
     )
-    this.getAndCacheOptions = this.getAndCacheOptions.bind(this)
+    this.getAndCacheSkills = this.getAndCacheSkills.bind(this);
   }
 
-  fetchAllFromDb() {
+  fetchAllSkills() {
     return Promise.resolve(["rawrrrr", "im an option"]);
   }
 
-  getAndCacheOptions(searchText, prevQuery, oldOptions) {
-    console.log(this.skillsCache)
+  getAndCacheSkills(searchText, prevQuery, oldOptions) {
+    console.log("skillsCache:");
+    console.log(this.skillsCache);
     if (searchText in this.skillsCache) {
       return this.skillsCache[searchText];
     }
-    this.fetchAllFromDb()
-    let options = ["rawrrrr", "im an option"]
-    this.skillsCache[searchText] = options
-    return options
+    this.fetchAllSkills();
+    let options = ["rawrrrr", "im an option"];
+    this.skillsCache[searchText] = options;
+    return options;
   }
 
   render() {
     return <OptionSearchBox
-      id="imanid"
-      getOptions={this.getAndCacheOptions}
+      getOptions={this.getAndCacheSkills}
       optionToHTML={(opt, selectCB) => <button onClick={selectCB}>opt</button>}
       selectionToHTML={(sel, deselectCB) => <button onClick={deselectCB}>opt</button>}
       onlyOneSelection={false}
