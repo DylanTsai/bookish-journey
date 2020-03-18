@@ -1,6 +1,12 @@
 import React from 'react';
 import { StateUpdateMachine } from './stateUtils';
 
+/**
+ * Class for monitoring state of a text input.
+ * Consolidates onChange callbacks for empty text inputs and nonEmpty text inputs
+ * into a single onChange function. Pass this onChange into the HTML input element
+ * that you want to monitor.
+ */
 export class TextInputMonitor {
   private _text: string;
   private readonly onEmptyCB: () => void;
@@ -51,10 +57,10 @@ export type ValidationResults<T extends keyof any> = {
   [property in T]: boolean
 }
 
-/** 
- * onValidation is run before onEmpty and onNotEmpty.
- * Upon construction, onValidation is called and validationResults
-*/
+/**
+ * A [TextInputMonitor] that additionally consolidates input validation into the
+ * onChange function. [onValidation] is run before onEmpty and onNotEmpty.
+ */
 export class ValidatedTextInputMonitor<T extends keyof any,
   stateT extends Object = Object>
   extends TextInputMonitor {

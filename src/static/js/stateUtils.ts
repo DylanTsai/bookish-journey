@@ -1,7 +1,7 @@
 import React from 'react'
 
 /**
- * Calls setState with 
+ * Calls setState with some properties updated.
  * @param cls React Component to call setState() from
  * @param property Property to change
  * @param value Value to set property to
