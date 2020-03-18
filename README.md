@@ -29,7 +29,7 @@ All HTML files need to be in src/templates/ and all Javascript and CSS files nee
 All javascript files need to have the line `import regeneratorRuntime from "regenerator-runtime"`.
 Make sure that all javascript files are (transitively) imported by a file listed in `entry` in `webpack.config.js.
 
-For database visualization, download TablePlus and connect with the following specs:
+For database visualization, Zhihao find 'TablePlus' a good app to use and anyone could connect with the following specs: 
 Name: MyDatabase  
 Host/Socket: symbatest.c3uotbqk2qpa.us-east-2.rds.amazonaws.com   
 Port: 5432  
