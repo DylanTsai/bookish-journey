@@ -36,3 +36,23 @@ Port: 5432
 User: masterusername   
 Pass: masterpassword  
 Database: postgres
+
+## Codebase Structure
+This outermost directory is primarily for project-wide setup (localization setup, Python requirements, and devstart) and documentation. src contains most of the source code.
+src contains app.py, the entrypoint for Flask. database is for Python files dealing with the database. templates has html files. static is our Typescript/CSS folder, and it is the starting directory for NodeJS and Babel/Webpack. To install Node packages, run `npm install` in static.
+Inside static:
+- styles: all css files
+- tsconfig.json: Typescript config
+- package.json, package-lock.json, node_modules: Node package management
+- webpack.config.js: Webpack config. Change entrypoints in here to control how bundles are created in dist
+- .babelrc: Babel config
+- dist: transpiled Javascript+CSS files, created by Webpack through `npm run build` or `npm run watch`
+- js: all Typescript and Javascript files
+	- createProfile.tsx, createProfileComponents: files for Creating Profile
+	- textUtils.tsx: helpful classes to work with text and to monitor text input elements
+	- stateUtils.ts: convenient tools for working with React state
+	- dbUtils.js: utilities for interfacing with the database
+	- constants.js: Typescript constants that are used throughout the entire project
+	- symbaToolbar.tsx: the toolbar that is always displayed at the top of the page
+	- gen: generated files. For ease of setup, the make process only changes the files in gen. generated files include language constants (for localization)
+	- everything else: we just used those for testing and learning javascript/typescript. 
