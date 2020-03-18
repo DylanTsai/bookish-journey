@@ -3,7 +3,7 @@ const config = {
     entry: {
         // TODO: Add a line here for every source file created
         test: __dirname + '/js/test.js',
-        createPassword: __dirname + '/js/createPassword.tsx'
+        createProfile: __dirname + '/js/createProfile.tsx'
     },
     output: {
         path: __dirname + '/dist',

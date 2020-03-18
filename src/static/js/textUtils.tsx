@@ -1,4 +1,5 @@
 import React from 'react';
+import { StateUpdateMachine } from './stateUtils';
 
 export class TextInputMonitor {
   private _text: string;
@@ -54,26 +55,36 @@ export type ValidationResults<T extends keyof any> = {
  * onValidation is run before onEmpty and onNotEmpty.
  * Upon construction, onValidation is called and validationResults
 */
-export class ValidatedTextInputMonitor<T extends keyof any> extends TextInputMonitor {
+export class ValidatedTextInputMonitor<T extends keyof any,
+  stateT extends Object = Object>
+  extends TextInputMonitor {
   private _validationResults: ValidationResults<T>;
   private validate: (newTxt: string) => ValidationResults<T>;
-  private onValidation: (validRes: ValidationResults<T>) => void
+  private onValidation: (validRes: ValidationResults<T>) => void;
 
-  constructor(onEmpty: () => void, onNotEmpty: (newTxt: string) => void,
-    validate: (newTxt: string) => ValidationResults<T>,
-    onValidation: (validRes: ValidationResults<T>) => void, debug = true) {
+  constructor(
+    onEmpty: (stateUpdateMachine) => void,
+    onNotEmpty: (newTxt: string, stateUpdateMachine: StateUpdateMachine<stateT>) => void,
+    validate: (newTxt: string, stateUpdateMachine: StateUpdateMachine<stateT>) => ValidationResults<T>,
+    onValidation: (validRes: ValidationResults<T>, stateUpdateMachine) => void,
+    thisObj: React.Component<any, stateT>,
+    debug = true) {
 
     let onEmptyCB = () => {
-      let validationResults: ValidationResults<T> = validate("");
+      let stateUpdateMachine: StateUpdateMachine<stateT> = new StateUpdateMachine(thisObj);
+      let validationResults: ValidationResults<T> = validate("", stateUpdateMachine);
       this._validationResults = validationResults;
-      onValidation(validationResults);
-      onEmpty();
+      onValidation(validationResults, stateUpdateMachine);
+      onEmpty(stateUpdateMachine);
+      stateUpdateMachine.doUpdate();
     }
     let onNotEmptyCB = (newTxt: string) => {
-      let validationResults: ValidationResults<T> = validate(newTxt);
+      let stateUpdateMachine: StateUpdateMachine<stateT> = new StateUpdateMachine(thisObj);
+      let validationResults: ValidationResults<T> = validate(newTxt, stateUpdateMachine);
       this._validationResults = validationResults;
-      onValidation(validationResults);
-      onNotEmpty(newTxt);
+      onValidation(validationResults, stateUpdateMachine);
+      onNotEmpty(newTxt, stateUpdateMachine);
+      stateUpdateMachine.doUpdate();
     }
     super(onEmptyCB, onNotEmptyCB, debug);
   }

@@ -17,6 +17,10 @@ app = Flask(__name__,
 def hello():
     return render_template("test.html")
 
+@app.route('/create-profile')
+def createProfile():
+    return render_template("createProfile.html")
+
 @app.route('/create-password/<string:email>')
 def createPassword(email: str):
     return render_template("createPassword.html",email=email)

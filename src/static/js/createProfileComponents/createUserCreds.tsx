@@ -1,12 +1,7 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { Route, BrowserRouter as Router } from 'react-router-dom';
-import { ValidatedTextInputMonitor, ValidationResults } from './textUtils';
-import styleConsts from '../styles/constants.css';
-
-export type CreatePasswordMainProps = {
-  email: string
-}
+import { ValidatedTextInputMonitor, ValidationResults } from '../textUtils';
+import styleConsts from '../../styles/constants.css';
+import { StateUpdateMachine } from '../stateUtils';
 
 type PwReqs =
   | "gte_6_chars"
@@ -19,26 +14,35 @@ let PwReqMessages: { [P in PwReqs]: string } = {
   contains_number_or_special: "Must contain a number or special character"
 }
 
-const SimpleEmailInput = ({ match }) => (
-  <input value={match.params.email} disabled />
-);
+export type CreateUserCredsProps = {
+  updateInfo: (email: string, pw: string) => void
+}
 
-export class CreatePasswordMain extends React.Component<CreatePasswordMainProps, { allValid: boolean }> {
-  private email: string;
+export type CreateUserCredsState = {
+  emailValid: boolean,
+  pwValid: boolean
+}
+
+export class CreateUserCreds extends React.Component<CreateUserCredsProps, CreateUserCredsState> {
   private pwMonitor: ValidatedTextInputMonitor<PwReqs>
 
-  constructor(props: CreatePasswordMainProps) {
+  constructor(props: CreateUserCredsProps) {
     super(props);
     this.state = {
-      allValid: false
+      emailValid: false,
+      pwValid: false
     }
-    this.email = props.email;
     this.validate.bind(this);
     this.pwMonitor = new ValidatedTextInputMonitor<PwReqs>(
       () => null,
       () => null,
       this.validate,
-      () => this.setState({ allValid: true })
+      (validRes: ValidationResults<PwReqs>,
+        stateUpdateMachine: StateUpdateMachine<CreateUserCredsState>) => {
+        let validPw: boolean = Object.values(validRes).every(b => b);
+        stateUpdateMachine.register("pwValid", validPw)
+      },
+      this
     );
   }
 
@@ -57,7 +61,7 @@ export class CreatePasswordMain extends React.Component<CreatePasswordMainProps,
           Email
         </div>
         <div id="email-input-container">
-          <Route path="/create-password/:email" component={SimpleEmailInput} />
+          <input value={"TODO: use ValidatedTextInput to verify email creds and put email into state"} disabled />
         </div>
       </div>
     </>
@@ -85,19 +89,17 @@ export class CreatePasswordMain extends React.Component<CreatePasswordMainProps,
         </div>
       </div>
     </>
-    let submit = <div>
-      <button id="submit-button" disabled={this.state.allValid}
-        onClick={() => console.log("Submitted!")}>Submit</button>
+    let submitBtn = <div>
+      <button id="submit-button" disabled={!this.state.pwValid}
+        onClick={() => { this.props.updateInfo("TODO email", this.pwMonitor.text) }}>
+        Submit
+      </button>
     </div>
     return <>
-      <Router>
-        insert icon here!
-        {email}
-        {pw}
-        {submit}
-      </Router>
+      insert icon here!
+      {email}
+      {pw}
+      {submitBtn}
     </>
   }
 }
-ReactDOM.render(<CreatePasswordMain email="imanemail" />,
-  document.getElementById("create-password-main-container"));
