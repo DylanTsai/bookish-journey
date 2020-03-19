@@ -6,6 +6,9 @@ import { StateUpdateMachine } from './stateUtils';
  * Consolidates onChange callbacks for empty text inputs and nonEmpty text inputs
  * into a single onChange function. Pass this onChange into the HTML input element
  * that you want to monitor.
+ * @param onEmpty - onChange callback when input changes to ""
+ * @param onNotEmpty - onChange callback called otherwise
+ * @param debug - set to true to log some info in console
  */
 export class TextInputMonitor {
   private _text: string;
@@ -31,28 +34,30 @@ export class TextInputMonitor {
 
   onChange(event): string {
     if (this.debug) {
-      console.log("updating text: " + event.target.value)
+      console.log("updating text: " + event.target.value);
     }
-    let newText: string = event.target.value
+    let newText: string = event.target.value;
     this._text = newText;
     if (newText == "" && this.onEmptyCB) {
-      this.onEmptyCB()
+      this.onEmptyCB();
     } else {
       this.onNotEmptyCB(newText);
     }
     if (this.debug) {
-      console.log("finished updating text: " + event.target.value)
+      console.log("finished updating text: " + event.target.value);
     }
     return newText;
   }
 }
 
-export type TextInputProps = {
-  id: string,
-  monitor: TextInputMonitor;
-  render: (monitor: TextInputMonitor) => React.ReactNode
-}
-
+/**
+ * The type of a validation result, for use with ValidatedTextInputMonitor.
+ * Example:
+ * ValidationResults<"noSpaces" | "noNumbers"> = {
+ *    noSpaces: boolean,
+ *    noNumbers: boolean
+ * }
+ */
 export type ValidationResults<T extends keyof any> = {
   [property in T]: boolean
 }
@@ -60,6 +65,16 @@ export type ValidationResults<T extends keyof any> = {
 /**
  * A [TextInputMonitor] that additionally consolidates input validation into the
  * onChange function. [onValidation] is run before onEmpty and onNotEmpty.
+ * 
+ * @param onEmpty - as in [TextInputMonitor]
+ * @param onNotEmpty - as in [TextInputMonitor] 
+ * @param validate [txt] is the validation result of [txt]
+ * @param onValidation - guaranteed to be called if [onEmpty] or [onNotEmpty] is
+ * called on [newTxt] and [validate(newTxt)] is different from [validate(oldTxt)]
+ * @param thisObj - Used to create the [StateUpdateMachine] that is passed into 
+ * the callbacks. Pass in the [this] reference of the React component whose 
+ * state should be changed.
+ * @param debug - as in [TextInputMonitor]
  */
 export class ValidatedTextInputMonitor<T extends keyof any,
   stateT extends Object = Object>
