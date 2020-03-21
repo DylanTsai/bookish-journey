@@ -8,6 +8,8 @@ import React from 'react'
  * It can also be used to make sure re-rendering is batched and state updates
  * are matched when doing asynchronous work (where "matched" means you can make
  * sure you don't update one part of the state without updating another part)
+ * 
+ * TODO apply singleton pattern to StateUpdateMachine https://refactoring.guru/design-patterns/singleton/typescript/example
  */
 export class StateUpdateMachine<stateT> {
 
@@ -19,19 +21,32 @@ export class StateUpdateMachine<stateT> {
     this.thisObj = thisObj;
   }
 
-  register<propertyT extends keyof stateT>(property: propertyT, value: stateT[propertyT]): void {
-    this._changes[property] = value;
-  }
-
-  doUpdate(): void {
+  /**
+   * @returns The state that would be set if [doUpdate] were called.
+   */
+  get newStateStagedForChange(): stateT {
     let newState: stateT = { ...this.thisObj.state };
     for (let key in this._changes) {
       newState[key] = (<stateT>this._changes)[key];
     }
-    this.thisObj.setState(newState);
+    return newState;
   }
 
-  get newStateStagedForChange(): stateT {
-    return { ...this.newStateStagedForChange };
+  /**
+   * Register a change to the state, which will be applied when doUpdate() is called. 
+   * Registering a change to an already-registered property will overwrite that previous change.
+   * @param property - name of property to be set
+   * @param value - what to set that property to
+   */
+  register<propertyT extends keyof stateT>(property: propertyT, value: stateT[propertyT]): void {
+    this._changes[property] = value;
   }
+
+  /**
+   * Apply all registered changes to the state, using the setState function.
+   */
+  doUpdate(): void {
+    this.thisObj.setState(this.newStateStagedForChange);
+  }
+
 }

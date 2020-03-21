@@ -24,14 +24,26 @@ export class TextInputMonitor {
     this.onChange = this.onChange.bind(this);
   }
 
+  /**
+   * The current text in the monitored input element. Do NOT use 
+   * in onchange functions for the monitored input element.
+   */
   get text(): string {
     return this._text;
   }
 
+  /**
+   * True iff the monitored input element has no text in it. Do
+   * NOT use in onchange functions for the monitored input element.
+   */
   isEmpty(): boolean {
     return this._text.length == 0;
   }
 
+  /**
+   * Pass this as [onchange] into the input element in order to monitor that
+   * element.
+   */
   onChange(event): string {
     if (this.debug) {
       console.log("updating text: " + event.target.value);
@@ -81,7 +93,7 @@ export class ValidatedTextInputMonitor<T extends keyof any, stateT extends Objec
   constructor(
     onEmpty: (stateUpdateMachine) => void,
     onNotEmpty: (newTxt: string, stateUpdateMachine: StateUpdateMachine<stateT>) => void,
-    validate: (newTxt: string, stateUpdateMachine: StateUpdateMachine<stateT>) => ValidationResults<T>,
+    validate: (newTxt: string, stateUpdateMachine: StateUpdateMachine<stateT>) => ValidationResults<T>, // TODO take out stateUpdateMachine
     onValidation: (validRes: ValidationResults<T>, stateUpdateMachine) => void,
     thisObj: React.Component<any, stateT>,
     debug = true) {

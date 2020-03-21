@@ -4,16 +4,6 @@ import { SymbaToolbar } from './symbaToolbar';
 import { CreateUserCreds } from './createProfileComponents/createUserCreds';
 import { EnterAvailability, Availability } from './createProfileComponents/EnterAvailability';
 
-
-
-
-// next: 
-// updateInfo: (email: string, pw: string) => void
-
-// interface createProfileMainInterface extends React.Component {
-
-// }
-
 const stageOrder = [
   "user_creds",
   "availability",
@@ -28,42 +18,65 @@ export type stageOpt = typeof stageOrder[number];
 
 class CreateProfileNavigator {
   private readonly getCurrStage: () => stageOpt;
-  private readonly setStage: (newStage: stageOpt) => void;
+  private readonly navTo: (newStage: stageOpt) => void;
   private readonly afterLastStage: () => void;
 
   constructor(getCurrStage: () => stageOpt,
     setStage: (newStage: stageOpt) => void,
     afterLastStage: () => void) {
     this.getCurrStage = getCurrStage;
-    this.setStage = setStage;
+    this.navTo = setStage;
     this.afterLastStage = afterLastStage;
   }
 
+  /**
+   * @returns The next stage, or null if this is the last stage.
+   */
   private nextStage(): stageOpt | null {
     let i: number = stageOrder.indexOf(this.getCurrStage()) + 1
     return i > stageOrder.length ? null : stageOrder[i];
   }
 
+  /**
+   * @returns The previous stage, or null if this is the first stage.
+   */
   private prevStage(): stageOpt | null {
     let i: number = stageOrder.indexOf(this.getCurrStage()) - 1
     return i < 0 ? null : stageOrder[i];
   }
 
+  /**
+   * @returns True if this is not the last stage.
+   */
   hasNext(): boolean { return this.nextStage() != null; }
 
+  /**
+   * @returns True if this is not the first stage.
+   */
   hasPrev(): boolean { return this.prevStage() != null; }
 
+  /**
+   * Navigates to the next stage. If this is the last stage, called
+   * [afterLastStage].
+   */
   navToNext(): void {
     if (!this.hasNext()) {
       this.afterLastStage();
     }
-    this.setStage(this.nextStage() as stageOpt);
+    this.navTo(this.nextStage() as stageOpt);
   }
+
+  /**
+   * Navigates to the previous stage.
+   * @throws 
+   *  If this is the last stage, called
+   * [afterLastStage].
+   */
   navToPrev(): void {
     if (!this.hasPrev()) {
-      throw Error("No next stage to navigate to!");
+      throw RangeError("No next stage to navigate to!");
     }
-    this.setStage(this.prevStage() as stageOpt);
+    this.navTo(this.prevStage() as stageOpt);
   }
 }
 
@@ -105,9 +118,11 @@ class CreateProfile extends React.Component<{}, createProfileState> {
 
   /**
    * The button that brings up the next stage in the profile creation process.
+   * @param teardown - Called before navigating to the next stage. Use this
+   * callback to save variables or clear state in the stage-specific component(s).
    */
-  renderNextBut(cleanup: () => void) {
-    return <button onClick={() => { cleanup(); this.navigator.navToNext() }} />;
+  renderNextBut(teardown: () => void) {
+    return <button onClick={() => { teardown(); this.navigator.navToNext() }} />;
   }
 
   render(): React.ReactElement {
