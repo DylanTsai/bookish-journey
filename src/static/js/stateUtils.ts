@@ -1,23 +1,6 @@
 import React from 'react'
 
 /**
- * Calls setState with some properties updated.
- * @param cls React Component to call setState() from
- * @param property Property to change
- * @param value Value to set property to
- */
-export function updateStatePartial<stateT extends Object, clsT extends React.Component<any, stateT & any>>
-  (cls: clsT, changes: Partial<stateT>) {
-  let newState: stateT & any = { ...cls.state };
-  for (let key in changes) {
-    if (changes[key]) {
-      newState[key] = (<stateT>changes)[key];
-    }
-  }
-  cls.setState(newState);
-}
-
-/**
  * Utility to register changes to the state, and then apply those changes
  * (i.e. call setState) later. This is useful for making sure that [this.state]
  * is not mutated during an event handler (as that could cause unexpected behavior
@@ -26,7 +9,7 @@ export function updateStatePartial<stateT extends Object, clsT extends React.Com
  * are matched when doing asynchronous work (where "matched" means you can make
  * sure you don't update one part of the state without updating another part)
  */
-export class StateUpdateMachine<baseStateT extends Object, stateT extends baseStateT & any = baseStateT & any> {
+export class StateUpdateMachine<stateT> {
 
   private _changes: Partial<stateT>; // key-value pairs to set in the state during [doUpdate]
   private readonly thisObj: React.Component<any, stateT>;
@@ -36,8 +19,7 @@ export class StateUpdateMachine<baseStateT extends Object, stateT extends baseSt
     this.thisObj = thisObj;
   }
 
-  register<propertyT extends keyof stateT>(property: propertyT,
-    value: stateT[propertyT]): void {
+  register<propertyT extends keyof stateT>(property: propertyT, value: stateT[propertyT]): void {
     this._changes[property] = value;
   }
 
@@ -49,7 +31,7 @@ export class StateUpdateMachine<baseStateT extends Object, stateT extends baseSt
     this.thisObj.setState(newState);
   }
 
-  get newState(): stateT {
-    return { ...this.newState };
+  get newStateStagedForChange(): stateT {
+    return { ...this.newStateStagedForChange };
   }
 }

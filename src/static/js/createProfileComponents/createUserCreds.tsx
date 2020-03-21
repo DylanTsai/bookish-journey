@@ -24,7 +24,7 @@ export type CreateUserCredsState = {
 }
 
 export class CreateUserCreds extends React.Component<CreateUserCredsProps, CreateUserCredsState> {
-  private pwMonitor: ValidatedTextInputMonitor<PwReqs>
+  private pwMonitor: ValidatedTextInputMonitor<PwReqs, CreateUserCredsState>
 
   constructor(props: CreateUserCredsProps) {
     super(props);
@@ -33,14 +33,14 @@ export class CreateUserCreds extends React.Component<CreateUserCredsProps, Creat
       pwValid: false
     }
     this.validate.bind(this);
-    this.pwMonitor = new ValidatedTextInputMonitor<PwReqs>(
+    this.pwMonitor = new ValidatedTextInputMonitor<PwReqs, CreateUserCredsState>(
       () => null,
       () => null,
       this.validate,
       (validRes: ValidationResults<PwReqs>,
         stateUpdateMachine: StateUpdateMachine<CreateUserCredsState>) => {
         let validPw: boolean = Object.values(validRes).every(b => b);
-        stateUpdateMachine.register("pwValid", validPw)
+        stateUpdateMachine.register("pwValid", validPw);
       },
       this
     );

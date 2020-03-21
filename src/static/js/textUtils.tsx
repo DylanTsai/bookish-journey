@@ -38,11 +38,7 @@ export class TextInputMonitor {
     }
     let newText: string = event.target.value;
     this._text = newText;
-    if (newText == "" && this.onEmptyCB) {
-      this.onEmptyCB();
-    } else {
-      this.onNotEmptyCB(newText);
-    }
+    newText == "" ? this.onEmptyCB() : this.onNotEmptyCB(newText);
     if (this.debug) {
       console.log("finished updating text: " + event.target.value);
     }
@@ -76,8 +72,7 @@ export type ValidationResults<T extends keyof any> = {
  * state should be changed.
  * @param debug - as in [TextInputMonitor]
  */
-export class ValidatedTextInputMonitor<T extends keyof any,
-  stateT extends Object = Object>
+export class ValidatedTextInputMonitor<T extends keyof any, stateT extends Object>
   extends TextInputMonitor {
   private _validationResults: ValidationResults<T>;
   private validate: (newTxt: string) => ValidationResults<T>;
