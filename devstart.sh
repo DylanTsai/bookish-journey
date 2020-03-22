@@ -59,7 +59,12 @@ function mypy_watch() {
 
 function restart_flask() {
   cd $repoSrcDir/src
-  kill $(ps aux | grep 'python3 app.py' | awk '{print $2}') &> /dev/null
+  if [ "$1" != "slp" ] 
+  then 
+	  kill $(ps aux | grep 'python3 app.py' | awk '{print $2}') &> /dev/null
+  else
+	  kill $(netstat -vanp tcp | grep 5000 | awk '{print $9}') &> /dev/null
+  fi
   python3 app.py |& tee -a $flask_buf $flask_output &> /dev/null &
   flask_pid="$!"
   cd $repoSrcDir
@@ -210,8 +215,13 @@ function run() {
   rm $flask_buf
   rm $babel_buf
   rm $mypy_buf
-  kill $(ps aux | grep 'python3 app.py') &> /dev/null
-  kill $(ps aux | grep 'unbuffer npm run watch') &> /dev/null
+  if [ "$1" != "slp" ]
+  then
+        kill $(ps aux | grep 'python3 app.py' | awk '{print $2}') &> /dev/null
+  else
+        kill $(netstat -vanp tcp | grep 5000 | awk '{print $9}') &> /dev/null
+  fi
+  kill $(ps aux | grep 'unbuffer npm run watch' | awk '{print $2}') &> /dev/null
   kill $(ps aux | grep 'xargs -0 -n1 -I{} unbuffer mypy src' | awk '{print $2}') &> /dev/null
   kill $(ps aux | grep 'unbuffer mypy **/*.py' | awk '{print $2}') &> /dev/null
   kill $(ps aux | grep 'fswatch -i .* src' | awk '{print $2}') &> /dev/null
