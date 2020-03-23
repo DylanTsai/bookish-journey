@@ -59,7 +59,7 @@ function mypy_watch() {
 
 function restart_flask() {
   cd $repoSrcDir/src
-  if [ "$1" != "slp" ] 
+  if [ "${BASH_ARGV[0]}" != "slp" ] 
   then 
 	  kill $(ps aux | grep 'python3 app.py' | awk '{print $2}') &> /dev/null
   else
