@@ -1,4 +1,5 @@
 const webpack = require('webpack');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const config = {
     entry: {
         // TODO: Add a line here for every source file created
@@ -9,6 +10,10 @@ const config = {
         path: __dirname + '/dist',
         filename: '[name].bundle.js',
     },
+    plugins: [new MiniCssExtractPlugin({
+        filename: '[name].css',
+        chunkFilename: '[id].css'
+    })],
     resolve: {
         extensions: ['.ts', '.tsx', '.js', '.jsx', '.css']
     },
@@ -23,7 +28,9 @@ const config = {
             },
             {
                 test: /\.css$/,
+                exclude: /node_modules/,
                 use: [
+                    { loader: MiniCssExtractPlugin.loader },
                     { loader: "style-loader" },
                     { loader: "@teamsupercell/typings-for-css-modules-loader" },
                     { loader: "css-modules-typescript-loader" },
