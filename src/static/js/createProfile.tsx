@@ -10,20 +10,21 @@ const stageOrder = [
   "PLACEHOLDER"
 ] as const;
 
-if ((new Set(stageOrder)).size != this.stageOrder.length) {
+if ((new Set(stageOrder)).size != stageOrder.length) {
   throw Error("stageOrder should not have duplicate entries");
 }
 
 export type stageOpt = typeof stageOrder[number];
 
 class CreateProfileNavigator {
-  private readonly getCurrStage: () => stageOpt;
-  private readonly navTo: (newStage: stageOpt) => void;
+  private readonly getCurrStage:   () => stageOpt;
+  private readonly navTo:          (newStage: stageOpt) => void;
   private readonly afterLastStage: () => void;
 
-  constructor(getCurrStage: () => stageOpt,
-    setStage: (newStage: stageOpt) => void,
-    afterLastStage: () => void) {
+  constructor(
+      getCurrStage: () => stageOpt,
+      setStage: (newStage: stageOpt) => void,
+      afterLastStage: () => void) {
     this.getCurrStage = getCurrStage;
     this.navTo = setStage;
     this.afterLastStage = afterLastStage;
