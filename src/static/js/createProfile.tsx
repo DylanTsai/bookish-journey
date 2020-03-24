@@ -4,12 +4,19 @@ import bs from 'bootstrap/dist/css/bootstrap.min.css';
 import index from '../styles/index.css';
 import { SymbaToolbar } from './symbaToolbar';
 import { CreateUserCreds } from './createProfileComponents/createUserCreds';
-import { EnterAvailability, Availability } from './createProfileComponents/EnterAvailability';
+import { EnterAvailability, Availability } from './createProfileComponents/availability';
 
 const stageOrder = [
-  "user_creds",
   "availability",
-  "PLACEHOLDER"
+  "user_creds",
+  "welcome",
+  "location",
+  "school",
+  "visa",
+  "superpower",
+  "expertise",
+  "skill",
+  "resume"
 ] as const;
 
 if ((new Set(stageOrder)).size != stageOrder.length) {
@@ -19,14 +26,14 @@ if ((new Set(stageOrder)).size != stageOrder.length) {
 export type stageOpt = typeof stageOrder[number];
 
 class CreateProfileNavigator {
-  private readonly getCurrStage:   () => stageOpt;
-  private readonly navTo:          (newStage: stageOpt) => void;
+  private readonly getCurrStage: () => stageOpt;
+  private readonly navTo: (newStage: stageOpt) => void;
   private readonly afterLastStage: () => void;
 
   constructor(
-      getCurrStage: () => stageOpt,
-      setStage: (newStage: stageOpt) => void,
-      afterLastStage: () => void) {
+    getCurrStage: () => stageOpt,
+    setStage: (newStage: stageOpt) => void,
+    afterLastStage: () => void) {
     this.getCurrStage = getCurrStage;
     this.navTo = setStage;
     this.afterLastStage = afterLastStage;
@@ -96,7 +103,7 @@ class CreateProfile extends React.Component<{}, createProfileState> {
   constructor(props: {}) {
     super(props);
     this.state = {
-      stage: "user_creds",
+      stage: stageOrder[0],
       email: null,
       pw: null,
       availability: null,
@@ -130,16 +137,32 @@ class CreateProfile extends React.Component<{}, createProfileState> {
 
   render(): React.ReactElement {
     let updateInfo, bodyElement;
-    switch (this.state.stage) {
+    switch (this.state.stage) { // set bodyElement
       case "user_creds":
         updateInfo = (email: string, pw: string) => this.setState({ email: email, pw: pw })
         bodyElement = <CreateUserCreds updateInfo={updateInfo} />
         break;
+      case "welcome":
+        throw Error("UNIMPLEMENTED");
+      case "location":
+        throw Error("UNIMPLEMENTED");
+      case "school":
+        throw Error("UNIMPLEMENTED");
+      case "visa":
+        throw Error("UNIMPLEMENTED");
+      case "superpower":
+        throw Error("UNIMPLEMENTED");
+      case "expertise":
+        throw Error("UNIMPLEMENTED");
+      case "skill":
+        throw Error("UNIMPLEMENTED");
+      case "resume":
+        throw Error("UNIMPLEMENTED");
       case "availability":
-        updateInfo = (email: string, pw: string) => this.setState({ email: email, pw: pw })
-        bodyElement = <EnterAvailability updateInfo={updateInfo} />
+        updateInfo = (availability: Availability[]) => this.setState({ availability: availability });
+        bodyElement = <EnterAvailability updateInfo={updateInfo} renderNextBut={this.renderNextBut} />
         break;
-      case "PLACEHOLDER":
+      case "welcome":
         throw Error("UNIMPLEMENTED")
     }
 
@@ -157,5 +180,5 @@ let mainBSClasses = [
   bs['align-items-center'], bs['h-100'], index["create-profile-main-container"]
 ];
 let mainContainer = document.getElementById('create-profile-main-container');
-mainContainer?.classList.add(...mainBSClasses);
+mainContainer ?.classList.add(...mainBSClasses);
 ReactDOM.render(<CreateProfile />, mainContainer);
