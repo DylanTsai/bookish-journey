@@ -13,40 +13,43 @@ import React from 'react'
  */
 export class StateUpdateMachine<stateT> {
 
-  private _changes: Partial<stateT>; // key-value pairs to set in the state during [doUpdate]
+  private _changes: ((state: stateT) => Pick<stateT, keyof stateT>)[] // [doUpdate]
   private readonly thisObj: React.Component<any, stateT>;
 
   constructor(thisObj: React.Component<any, stateT>) {
-    this._changes = {};
+    this._changes = [];
     this.thisObj = thisObj;
   }
 
   /**
-   * @returns The state that would be set if [doUpdate] were called.
-   */
-  get newStateStagedForChange(): stateT {
-    let newState: stateT = { ...this.thisObj.state };
-    for (let key in this._changes) {
-      newState[key] = (<stateT>this._changes)[key];
-    }
-    return newState;
-  }
-
-  /**
-   * Register a change to the state, which will be applied when doUpdate() is called. 
-   * Registering a change to an already-registered property will overwrite that previous change.
+   * Register a change to the state, which will be applied when doUpdate() is called.
    * @param property - name of property to be set
    * @param value - what to set that property to
    */
-  register<propertyT extends keyof stateT>(property: propertyT, value: stateT[propertyT]): void {
-    this._changes[property] = value;
+  register<propertyT extends keyof stateT>(property: propertyT, value: stateT[propertyT]): void
+  /**
+   * Register a change to the state, which will be applied when doUpdate() is called.
+   * @param func - function that would be passed into setState
+   */
+  register<propertyT extends keyof stateT>(func: (state: stateT) => Pick<stateT, keyof stateT>): void
+  register<propertyT extends keyof stateT>(param1: propertyT | ((state: stateT) => Pick<stateT, keyof stateT>),
+    param2?: stateT[propertyT]): void {
+    if (param2) {
+      let key: propertyT = <propertyT>param1;
+      let value: stateT[propertyT] = param2;
+      this._changes.push(_ => { return <Pick<stateT, keyof stateT>><unknown>{ [key]: value } });
+    } else {
+      this._changes.push(<(state: stateT) => Pick<stateT, keyof stateT>>param1);
+    }
   }
 
   /**
    * Apply all registered changes to the state, using the setState function.
+   * Changes are applied in the order of registration (though it is not advised 
+   * to have noncommutative state changes).
    */
   doUpdate(): void {
-    this.thisObj.setState(this.newStateStagedForChange);
+    this._changes.map(f => this.thisObj.setState(f));
   }
 
 }
