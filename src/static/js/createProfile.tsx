@@ -130,9 +130,18 @@ class CreateProfile extends React.Component<{}, createProfileState> {
    * The button that brings up the next stage in the profile creation process.
    * @param teardown - Called before navigating to the next stage. Use this
    * callback to save variables or clear state in the stage-specific component(s).
+   * @param titleTxt - Text to display on button.
+   * @param isDisabled - True if button should be disabled, false otherwise.
+   * @param extraClassStrings - Optional space-separated list of class strings to 
+   * add further styles onto the button.
    */
-  renderNextBut(teardown: () => void) {
-    return <button onClick={() => { teardown(); this.navigator.navToNext() }} />;
+  renderNextBut(teardown: () => void, titleTxt: string, isDisabled: boolean, extraClassStrings: string = "") {
+    return <button
+        className={index.navNextBtn + ' ' + extraClassStrings}
+        disabled={isDisabled}
+        onClick={() => { teardown(); this.navigator.navToNext() }}> 
+      {titleTxt}
+    </button>;
   }
 
   render(): React.ReactElement {
@@ -140,7 +149,7 @@ class CreateProfile extends React.Component<{}, createProfileState> {
     switch (this.state.stage) { // set bodyElement
       case "user_creds":
         updateInfo = (email: string, pw: string) => this.setState({ email: email, pw: pw })
-        bodyElement = <CreateUserCreds updateInfo={updateInfo} />
+        bodyElement = <CreateUserCreds updateInfo={updateInfo} renderNextBut={this.renderNextBut}/>
         break;
       case "welcome":
         throw Error("UNIMPLEMENTED");

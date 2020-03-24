@@ -1,8 +1,10 @@
 import * as React from 'react';
 import bs from 'bootstrap/dist/css/bootstrap.min.css';
 import styleConsts from '../../styles/constants.css';
-import { ValidatedTextInputMonitor, ValidationResults } from '../textUtils';
+import { ValidatedTextInputMonitor, ValidationResults, TextInputMonitor } from '../textUtils';
 import { StateUpdateMachine } from '../stateUtils';
+
+type EmReqs = "em_is_valid";
 
 type PwReqs =
   | "gte_6_chars"
@@ -16,28 +18,50 @@ let PwReqMessages: { [P in PwReqs]: string } = {
 }
 
 export type CreateUserCredsProps = {
-  updateInfo: (email: string, pw: string) => void
+  updateInfo: (email: string, pw: string) => void,
+  renderNextBut
 }
 
 export type CreateUserCredsState = {
+  nameValid: boolean,
   emailValid: boolean,
   pwValid: boolean
 }
 
 export class CreateUserCreds extends React.Component<CreateUserCredsProps, CreateUserCredsState> {
+  private nameMonitor: TextInputMonitor
+  private emMonitor: ValidatedTextInputMonitor<EmReqs, CreateUserCredsState>
   private pwMonitor: ValidatedTextInputMonitor<PwReqs, CreateUserCredsState>
 
   constructor(props: CreateUserCredsProps) {
     super(props);
     this.state = {
+      nameValid: false,
       emailValid: false,
       pwValid: false
     }
-    this.validate.bind(this);
+    this.validateEm.bind(this);
+    this.validatePw.bind(this);
+
+    this.nameMonitor = new TextInputMonitor(
+      () => this.setState({ nameValid: false }),
+      () => this.setState({ nameValid: true })
+    );
+    this.emMonitor = new ValidatedTextInputMonitor<EmReqs, CreateUserCredsState>(
+      () => null,
+      () => null,
+      this.validateEm,
+      ( validRes: ValidationResults<EmReqs>,
+        stateUpdateMachine: StateUpdateMachine<CreateUserCredsState>
+      ) => {
+        stateUpdateMachine.register("emailValid", validRes.em_is_valid);
+      },
+      this
+    );
     this.pwMonitor = new ValidatedTextInputMonitor<PwReqs, CreateUserCredsState>(
       () => null,
       () => null,
-      this.validate,
+      this.validatePw,
       (validRes: ValidationResults<PwReqs>,
         stateUpdateMachine: StateUpdateMachine<CreateUserCredsState>) => {
         let validPw: boolean = Object.values(validRes).every(b => b);
@@ -47,22 +71,29 @@ export class CreateUserCreds extends React.Component<CreateUserCredsProps, Creat
     );
   }
 
-  private validate(txt): ValidationResults<PwReqs> {
+  private validateEm(txt): ValidationResults<EmReqs> {
+    let emailRegex = /^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/;
+    return {
+      "em_is_valid": emailRegex.test(txt)
+    };
+  }
+
+  private validatePw(txt): ValidationResults<PwReqs> {
     return {
       "gte_6_chars": txt.length >= 6,
       "contains_capital": /[A-Z]/.test(txt),
       "contains_number_or_special": /[^A-Za-z]/.test(txt)
-    }
+    };
   }
 
   render() {
     let name = <>
-      <form id="text" className={bs['text-left']}>
+      <form id="name" className={bs['text-left']}>
         <div id="name-heading-container">
           Name
         </div>
         <div id="name-input-container">
-          <input className={bs["form-control"]} />
+          <input className={bs["form-control"]} onChange={this.nameMonitor.onChange}/>
         </div>
       </form>
     </>
@@ -72,7 +103,7 @@ export class CreateUserCreds extends React.Component<CreateUserCredsProps, Creat
           Email
         </div>
         <div id="email-input-container">
-          <input className={bs["form-control"]} type="email" value={"TODO: use ValidatedTextInput to verify email creds and put email into state"} disabled />
+          <input type="email" className={bs["form-control"]} onChange={this.emMonitor.onChange}/>
         </div>
       </form>
     </>
@@ -86,7 +117,7 @@ export class CreateUserCreds extends React.Component<CreateUserCredsProps, Creat
           return <div key={req}>{icon}: {msg}</div>
         });
     let pw = <>
-      <div id="pw" className={bs["text-left"]}>
+      <form id="pw" className={bs["text-left"]}>
         <div id="pw-heading-container">
           New password
         </div>
@@ -98,14 +129,16 @@ export class CreateUserCreds extends React.Component<CreateUserCredsProps, Creat
             make_empty_pw_feedback() : make_filled_pw_feedback(this.pwMonitor.validationResults)
           }
         </div>
-      </div>
+      </form>
     </>
-    let submitBtn = <div>
-      <button className={`${bs.btn} ${bs["btn-info"]}`} id="submit-button" disabled={!this.state.pwValid}
-        onClick={() => { this.props.updateInfo("TODO email", this.pwMonitor.text) }}>
-        Create Account
-      </button>
-    </div>
+    let teardown = () => this.props.updateInfo(this.emMonitor.text, this.pwMonitor.text);
+    let isDisabled = !this.state.pwValid || !this.state.emailValid || this.nameMonitor.isEmpty()
+    console.log("is name empty?");
+    console.log(this.nameMonitor.isEmpty());
+    let submitBtn = this.props.renderNextBut(
+      teardown, "Create Account", isDisabled, `${bs.btn} ${bs["btn-info"]}`
+    );
+
     return (
       <div className={`${bs.card} ${bs['w-100']} ${bs.shadow} ${bs['text-center']}`}>
         <div className={bs['card-body']}>
@@ -117,6 +150,6 @@ export class CreateUserCreds extends React.Component<CreateUserCredsProps, Creat
           {submitBtn}
         </div>
       </div>
-    )
+    );
   }
 }
