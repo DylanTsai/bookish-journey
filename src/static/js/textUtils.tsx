@@ -126,3 +126,186 @@ export class ValidatedTextInputMonitor<T extends keyof any, stateT extends Objec
     return this._validationResults;
   }
 }
+
+
+export type TypeAheadOptionRenderHelpers<optionT> = {
+  option: optionT,
+  select: () => void
+}
+
+export type TypeAheadSelectionRenderHelper<optionT> = {
+  option: optionT,
+  deselect: () => void
+}
+
+export type TypeAheadInputProps<optionT> = {
+  getOptions: (input: string, prevInput: string, prevOpts: optionT[]) => Promise<optionT[]>,
+  render: (input: string, isFetching: boolean, onTextChange: (input: string) => void,
+    optionRenderHelpers: TypeAheadOptionRenderHelpers<optionT>[],
+    selectionRenderHelpers: TypeAheadSelectionRenderHelper<optionT>[]) => JSX.Element,
+  onlyOneSelection: boolean,
+  onSelectionChange?: (newSelection, oldSelection) => void
+}
+
+class OptionWithId<optionT> {
+  private static counter = 0;
+  private _id: number;
+  private _value: optionT;
+  constructor(value: optionT) {
+    this._value = value;
+    this._id = ++OptionWithId.counter;
+  }
+
+  get id() {
+    return this._id
+  }
+
+  get value() {
+    return this._value
+  }
+}
+
+type TypeAheadInputState<optionT> = {
+  input: string,
+  lastProcessedQuery: string,
+  lastFetchedOptions: optionT[],
+  selection: OptionWithId<optionT>[]
+}
+
+export class TypeAheadInput<optionT> extends React.Component<TypeAheadInputProps<optionT>, TypeAheadInputState<optionT>> {
+
+  private lastOptionFetchId: number = 0;
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      input: "",
+      lastProcessedQuery: "",
+      lastFetchedOptions: [],
+      selection: []
+    }
+    this.onTextChange = this.onTextChange.bind(this);
+  }
+
+  get input(): string {
+    return this.state.input;
+  }
+
+  get lastProcessedQuery(): string {
+    return this.state.lastProcessedQuery;
+  }
+
+  get lastFetchedOptions(): optionT[] {
+    return [...this.state.lastFetchedOptions];
+  }
+
+  get isFetching(): boolean {
+    return this.state.input != this.state.lastProcessedQuery;
+  }
+
+  private async onTextChange(input: string): Promise<void> {
+    this.setState({
+      input: input
+    })
+    let id = ++this.lastOptionFetchId;
+    let newOptions = await this.props.getOptions(input, this.state.lastProcessedQuery, this.state.lastFetchedOptions);
+    if (id < this.lastOptionFetchId) {
+      console.log("onTextChange fetch with optionFetchId=" + id + " is out of date.")
+      // then onTextChange was called on a newer input, so we can throw away this change
+      return
+    }
+    this.setState({
+      lastProcessedQuery: input,
+      lastFetchedOptions: newOptions
+    })
+  }
+
+  private select(opt: optionT) {
+    let optWId = new OptionWithId(opt);
+    let newSelection: OptionWithId<optionT>[] = this.props.onlyOneSelection ? [optWId] : this.state.selection.concat(optWId);
+    if (this.props.onSelectionChange) {
+      this.props.onSelectionChange(newSelection, this.state.selection);
+    }
+    this.setState({ selection: newSelection });
+  }
+
+  private deselect(optWId: OptionWithId<optionT>) {
+    let newSelection = this.state.selection.filter((other) => other.id == optWId.id);
+    if (newSelection.length == this.state.selection.length) {
+      console.log(`Warning: Tried to deselect "${optWId.value}", but "${optWId.value}" was not in selection.`);
+    }
+    if (this.props.onSelectionChange) {
+      this.props.onSelectionChange(newSelection, this.state.selection);
+    }
+    this.setState({
+      selection: newSelection
+    });
+  }
+
+  get selection(): optionT[] {
+    return this.state.selection.map(selWId => selWId.value);
+  }
+
+  render() {
+    let optionRenderHelpers: TypeAheadOptionRenderHelpers<optionT>[] = this.state.lastFetchedOptions.map(
+      (opt) => ({
+        option: opt,
+        select: () => this.select(opt)
+      })
+    )
+    let selectionRenderHelpers: TypeAheadSelectionRenderHelper<optionT>[] = this.state.selection.map(
+      (optWId) => ({
+        option: optWId.value,
+        deselect: () => this.deselect(optWId)
+      })
+    );
+    return this.props.render(this.state.input, this.isFetching,
+      this.onTextChange, optionRenderHelpers, selectionRenderHelpers);
+  }
+}
+
+// export class SkillSearchBox extends React.Component {
+
+//   skillsCache = {}
+
+//   constructor(props) {
+//     super(props);
+//     this.getAndCacheSkills.bind(this);
+//     this.state = {
+//       ready: false
+//     }
+//     this.fetchAllSkills().then(
+//       (allSkills) => {
+//         this.skillsCache[""] = allSkills;
+//         this.setState({ ready: true })
+//       }
+//     )
+//     this.getAndCacheSkills = this.getAndCacheSkills.bind(this);
+//   }
+
+//   fetchAllSkills() {
+//     return Promise.resolve(["rawrrrr", "im an option"]);
+//   }
+
+//   getAndCacheSkills(searchText, prevQuery, oldOptions) {
+//     console.log("skillsCache:");
+//     console.log(this.skillsCache);
+//     if (searchText in this.skillsCache) {
+//       return this.skillsCache[searchText];
+//     }
+//     this.fetchAllSkills();
+//     let options = ["rawrrrr", "im an option"];
+//     this.skillsCache[searchText] = options;
+//     return options;
+//   }
+
+//   render() {
+//     return <OptionSearchBox
+//       getOptions={this.getAndCacheSkills}
+//       optionToHTML={(opt, selectCB) => <button onClick={selectCB}>opt</button>}
+//       selectionToHTML={(sel, deselectCB) => <button onClick={deselectCB}>opt</button>}
+//       onlyOneSelection={false}
+//     />
+
+//   }
+// }

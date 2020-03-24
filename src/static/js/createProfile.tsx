@@ -7,7 +7,6 @@ import { CreateUserCreds } from './createProfileComponents/createUserCreds';
 import { EnterAvailability, Availability } from './createProfileComponents/availability';
 
 const stageOrder = [
-  "availability",
   "user_creds",
   "welcome",
   "location",
@@ -16,7 +15,8 @@ const stageOrder = [
   "superpower",
   "expertise",
   "skill",
-  "resume"
+  "resume",
+  "availability"
 ] as const;
 
 if ((new Set(stageOrder)).size != stageOrder.length) {
@@ -137,9 +137,9 @@ class CreateProfile extends React.Component<{}, createProfileState> {
    */
   renderNextBut(teardown: () => void, titleTxt: string, isDisabled: boolean, extraClassStrings: string = "") {
     return <button
-        className={index.navNextBtn + ' ' + extraClassStrings}
-        disabled={isDisabled}
-        onClick={() => { teardown(); this.navigator.navToNext() }}> 
+      className={index.navNextBtn + ' ' + extraClassStrings}
+      disabled={isDisabled}
+      onClick={() => { teardown(); this.navigator.navToNext() }}>
       {titleTxt}
     </button>;
   }
@@ -149,7 +149,7 @@ class CreateProfile extends React.Component<{}, createProfileState> {
     switch (this.state.stage) { // set bodyElement
       case "user_creds":
         updateInfo = (email: string, pw: string) => this.setState({ email: email, pw: pw })
-        bodyElement = <CreateUserCreds updateInfo={updateInfo} renderNextBut={this.renderNextBut}/>
+        bodyElement = <CreateUserCreds updateInfo={updateInfo} renderNextBut={this.renderNextBut} />
         break;
       case "welcome":
         throw Error("UNIMPLEMENTED");
