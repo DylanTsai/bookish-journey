@@ -1,0 +1,9 @@
+.toolbar {
+  background: #e1e0e4;
+  border-bottom: 1px solid black;
+}
+
+.create-profile-main-container {
+  background: #efeff1;
+  max-width: 600px;
+}

@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { ValidatedTextInputMonitor, ValidationResults } from '../textUtils';
+import bs from 'bootstrap/dist/css/bootstrap.min.css';
 import styleConsts from '../../styles/constants.css';
+import { ValidatedTextInputMonitor, ValidationResults } from '../textUtils';
 import { StateUpdateMachine } from '../stateUtils';
 
 type PwReqs =
@@ -55,32 +56,42 @@ export class CreateUserCreds extends React.Component<CreateUserCredsProps, Creat
   }
 
   render() {
+    let name = <>
+      <form id="text" className={bs['text-left']}>
+        <div id="name-heading-container">
+          Name
+        </div>
+        <div id="name-input-container">
+          <input className={bs["form-control"]} />
+        </div>
+      </form>
+    </>
     let email = <>
-      <div id="email">
+      <form id="email" className={bs['text-left']}>
         <div id="email-heading-container">
           Email
         </div>
         <div id="email-input-container">
-          <input value={"TODO: use ValidatedTextInput to verify email creds and put email into state"} disabled />
+          <input className={bs["form-control"]} type="email" value={"TODO: use ValidatedTextInput to verify email creds and put email into state"} disabled />
         </div>
-      </div>
+      </form>
     </>
     let make_empty_pw_feedback = () =>
       <div style={{ height: parseInt(styleConsts.textHeightDefault) * Object.keys(PwReqMessages).length }} />;
     let make_filled_pw_feedback = (validRes: ValidationResults<PwReqs>) =>
       Object.keys(PwReqMessages).map(
         (req) => {
-          let icon = this.pwMonitor.validationResults[req] ? "GOOD" : "BAD";
+          let icon = this.pwMonitor.validationResults[req] ? "✅" : "❌";
           let msg = PwReqMessages[req];
           return <div key={req}>{icon}: {msg}</div>
         });
     let pw = <>
-      <div id="pw">
+      <div id="pw" className={bs["text-left"]}>
         <div id="pw-heading-container">
           New password
         </div>
         <div id="pw-input-container">
-          <input type="text" onChange={this.pwMonitor.onChange}></input>
+          <input type="password" className={bs["form-control"]} onChange={this.pwMonitor.onChange}></input>
         </div>
         <div id="pw-feedback-container">
           {this.pwMonitor.isEmpty() ?
@@ -90,16 +101,22 @@ export class CreateUserCreds extends React.Component<CreateUserCredsProps, Creat
       </div>
     </>
     let submitBtn = <div>
-      <button id="submit-button" disabled={!this.state.pwValid}
+      <button className={`${bs.btn} ${bs["btn-info"]}`} id="submit-button" disabled={!this.state.pwValid}
         onClick={() => { this.props.updateInfo("TODO email", this.pwMonitor.text) }}>
-        Submit
+        Create Account
       </button>
     </div>
-    return <>
-      insert icon here!
-      {email}
-      {pw}
-      {submitBtn}
-    </>
+    return (
+      <div className={`${bs.card} ${bs['w-100']} ${bs.shadow} ${bs['text-center']}`}>
+        <div className={bs['card-body']}>
+          <img className={`${bs['mx-auto']} ${bs['d-block']}`} src="/dist/img/symba-s@1x.png" width={50} />
+          <h4 className={bs['card-title']}>Welcome to Symba</h4>
+          {name}
+          {email}
+          {pw}
+          {submitBtn}
+        </div>
+      </div>
+    )
   }
 }

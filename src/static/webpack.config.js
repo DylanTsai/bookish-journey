@@ -23,7 +23,7 @@ const config = {
             },
             {
                 test: /\.css$/,
-                exclude: /node_modules/,
+                // exclude: /node_modules/,
                 use: [
                     { loader: "style-loader" },
                     { loader: "@teamsupercell/typings-for-css-modules-loader" },
