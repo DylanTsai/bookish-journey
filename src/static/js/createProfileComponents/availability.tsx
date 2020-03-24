@@ -3,7 +3,6 @@ import { ValidatedTextInputMonitor, ValidationResults } from '../textUtils';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import 'react-datepicker/dist/react-datepicker-cssmodules.min.css';
-import { strict } from 'assert';
 
 const MAX_AVAILABILITIES = 3;
 
@@ -15,12 +14,12 @@ export interface Availability {
 
 export type EnterAvailabilityProps = {
   updateInfo: (availability: Availability[]) => void;
-  renderNextBut: (teardown: () => void) => React.ReactElement;
+  renderNextBut: (teardown: () => void, titleTxt: string, isDisabled: boolean, extraClassStrings?: string) => JSX.Element;
 }
 
 type EnterAvailabilityState = {
   // All entered availabilities
-  availabilities: Availability[];
+  allAvailabilities: Availability[];
   /**
    * How many of the entered availabilities will be submitted. Only the first
    * [numAvailabilities] entries in [availabilities] will be submitted.
@@ -29,18 +28,25 @@ type EnterAvailabilityState = {
 }
 
 export class EnterAvailability extends React.Component<EnterAvailabilityProps, EnterAvailabilityState> {
+
+  // dateRangeValidities[i] is true iff state.availabilities[i] has a start date
+  // earlier than its end date.
+  private dateRangeValidities: boolean[];
+
   constructor(props: EnterAvailabilityProps) {
     super(props);
-    let init_availabilities: Availability[] = []
+    let init_availabilities: Availability[] = [];
+    this.dateRangeValidities = [];
     for (let i = 0; i < MAX_AVAILABILITIES; i++) {
       init_availabilities.push({
         start: new Date(),
         end: new Date(),
         hoursPerWeek: 0
-      })
+      });
+      this.dateRangeValidities.push(false);
     }
     this.state = {
-      availabilities: init_availabilities,
+      allAvailabilities: init_availabilities,
       numAvailabilities: 1
     }
     this.removeAvailabilityField = this.removeAvailabilityField.bind(this);
@@ -53,7 +59,7 @@ export class EnterAvailability extends React.Component<EnterAvailabilityProps, E
    */
   private removeAvailabilityField(): void {
     console.log("here");
-    if (this.state.availabilities.length <= 1) {
+    if (this.state.allAvailabilities.length <= 1) {
       throw RangeError("Must have at least 1 availability field");
     }
     this.setState(state => ({
@@ -74,6 +80,16 @@ export class EnterAvailability extends React.Component<EnterAvailabilityProps, E
   }
 
   /**
+   * True iff each availability that will be submitted has a start date
+   * earlier than its end date.
+   */
+  private dateRangesAreValid(): boolean {
+    return this.dateRangeValidities.reduce(
+      (acc, curr, availabilityIdx) => acc && (curr || availabilityIdx > this.state.numAvailabilities)
+    );
+  }
+
+  /**
    * A start or end date picker
    * @param isStart - true if this is a start date picker, false if end date picker
    * @param availabilityIdx - index in [state.availabilities] of the Availability 
@@ -82,40 +98,60 @@ export class EnterAvailability extends React.Component<EnterAvailabilityProps, E
   private renderDatePicker(isStart: boolean, availabilityIdx: number): React.ReactElement {
     let setDate = (isStart: boolean, availabilityIdx: number, date: Date) =>
       this.setState(state => {
-        let availabilities = state.availabilities;
+        let availabilities = state.allAvailabilities;
         availabilities[availabilityIdx][isStart ? "start" : "end"] = date;
         return {
-          availabilities: availabilities
+          allAvailabilities: availabilities
         };
       });
+    let validate = (newStartDate: Date) => { // if isStart
+      let endDate = this.state.allAvailabilities[availabilityIdx].end;
+      return newStartDate < endDate
+    };
+    if (!isStart) {
+      validate = (newEndDate: Date) => { // if isStart
+        let startDate = this.state.allAvailabilities[availabilityIdx].end;
+        return newEndDate > startDate
+      };
+    }
     return <DatePicker
-      selected={this.state.availabilities[availabilityIdx][isStart ? "start" : "end"]}
-      onChange={date => setDate(isStart, availabilityIdx, date)}
+      selected={this.state.allAvailabilities[availabilityIdx][isStart ? "start" : "end"]}
+      onChange={date => {
+        setDate(isStart, availabilityIdx, date);
+        this.dateRangeValidities[availabilityIdx] = validate(date);
+      }}
     />;
   }
 
   /**
-   * An hours-per-week input.
+   * An hours-per-week select.
    * @param availabilityIdx - index in [state.availabilities] of the Availability 
    * this corresponds to.
    */
-  private renderHoursInput(availabilityIdx: number): React.ReactElement {
+  private renderHoursSelect(availabilityIdx: number): React.ReactElement {
     let updateHours = (idx: number, hours: number) =>
       this.setState(state => {
-        let availabilities = state.availabilities;
+        let availabilities = state.allAvailabilities;
         availabilities[idx].hoursPerWeek = hours;
         return {
-          availabilities: availabilities
+          allAvailabilities: availabilities
         };
       });
-    return <input type="text"
-      onChange={event => updateHours(availabilityIdx, parseInt(event.target.value))}
-    />;
+    return <select value={this.state.allAvailabilities[availabilityIdx].hoursPerWeek}
+      onChange={value => updateHours(availabilityIdx, parseInt(value.target.value))}>
+      <option value="1">1-9 hours</option>
+      <option value="10">10-19 hours</option>
+      <option value="20">20-29 hours</option>
+      <option value="30">30-39 hours</option>
+      <option value="40">40+ hours (full-time)</option>
+    </select>;
   }
+
+  private invalidTimeRange: JSX.Element = <>Start must be before end</>
 
   /**
    * An availability field with a start date picker, end date picker, and an 
-   * hours-per-week input.
+   * hours-per-week select.
    * @param availabilityIdx - index in [state.availabilities] of the Availability 
    * this corresponds to.
    */
@@ -123,17 +159,18 @@ export class EnterAvailability extends React.Component<EnterAvailabilityProps, E
     return <div key={`availability-field-${availabilityIdx}`}>
       {this.renderDatePicker(true, availabilityIdx)}
       {this.renderDatePicker(false, availabilityIdx)}
-      {this.renderHoursInput(availabilityIdx)}
+      {this.renderHoursSelect(availabilityIdx)}
+      {this.dateRangeValidities[availabilityIdx] ? <></> : this.invalidTimeRange}
     </div>
   }
 
   private teardown() {
-    this.props.updateInfo(this.state.availabilities.splice(0, this.state.numAvailabilities));
+    this.props.updateInfo(this.state.allAvailabilities.splice(0, this.state.numAvailabilities));
   }
 
   render() {
     console.log("availabilities:");
-    console.log(this.state.availabilities)
+    console.log(this.state.allAvailabilities)
     return <>
       <div>
         {[...Array(this.state.numAvailabilities).keys()].map(
@@ -141,10 +178,12 @@ export class EnterAvailability extends React.Component<EnterAvailabilityProps, E
         )}
       </div>
       <div>
-        <button onClick={this.removeAvailabilityField}>Remove</button>
-        <button onClick={this.addAvailabilityField}>Add</button>
+        <button onClick={this.removeAvailabilityField}
+          disabled={this.state.numAvailabilities <= 1}>Remove</button>
+        <button onClick={this.addAvailabilityField}
+          disabled={this.state.numAvailabilities >= 3}>Add</button>
       </div>
-      {this.props.renderNextBut(this.teardown)}
+      {this.props.renderNextBut(this.teardown, "Save availabilities", !this.dateRangesAreValid())}
     </>
   }
 }
