@@ -6,7 +6,7 @@ import psycopg2
 def get_db():
     if 'db' not in g:
         g.db = psycopg2.connect(
-            database = "postgres",
+            database = "symbatest",
 
             host = "symbatest.c3uotbqk2qpa.us-east-2.rds.amazonaws.com",
             port = "5432",
@@ -26,29 +26,30 @@ def close_db(e=None):
 # connect to a postgres dababase
 
 
-con = psycopg2.connect(
-            database = "postgres",
+# con = psycopg2.connect(
+#             database = "symbatest",
 
-            host = "symbatest.c3uotbqk2qpa.us-east-2.rds.amazonaws.com",
-            port = "5432",
+#             host = "symbatest.c3uotbqk2qpa.us-east-2.rds.amazonaws.com",
+#             port = "5432",
             
-            user = "masterusername",
-            password = "masterpassword")
-# cursor to feed commands
-cur = con.cursor()
+#             user = "masterusername",
+#             password = "masterpassword")
+# # cursor to feed commands
+# cur = con.cursor()
 
-# you'll get a parameter from the person who goes to the website
-# it'll look something like /testRetrieveColFromSymbaApi_country?col='colname'
+# # you'll get a parameter from the person who goes to the website
+# # it'll look something like /testRetrieveColFromSymbaApi_country?col='colname'
 
-col = "name"
+# col = "name"
 
-cur.execute("select "+col+" from public.\"SymbaApi_country\"")
-rows = cur.fetchall()
-res = ""
-for r in rows:
-    res += r[0] +'\n'
-print(res)
-cur.close()
+# cur.execute("select "+col+" from public.\"SymbaApi_country\"")
+# rows = cur.fetchall()
+# res = ""
+# for r in rows:
+#     res += r[0] +'\n'
+# print(res)
+# cur.close()
+
 # cur.execute("""CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 #     """)
 
