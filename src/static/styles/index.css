@@ -4,6 +4,10 @@
 }
 
 .create-profile-main-container {
-  background: #efeff1;
-  max-width: 600px;
+  max-width: 550px;
+}
+
+.create-profile-main-container form {
+  font-family: 'Open Sans', sans-serif;
+  margin-top: 15px;
 }

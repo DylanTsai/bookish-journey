@@ -86,7 +86,7 @@ export class CreateUserCreds extends React.Component<CreateUserCredsProps, Creat
           return <div key={req}>{icon}: {msg}</div>
         });
     let pw = <>
-      <div id="pw" className={bs["text-left"]}>
+      <form id="pw" className={bs["text-left"]}>
         <div id="pw-heading-container">
           New password
         </div>
@@ -98,7 +98,7 @@ export class CreateUserCreds extends React.Component<CreateUserCredsProps, Creat
             make_empty_pw_feedback() : make_filled_pw_feedback(this.pwMonitor.validationResults)
           }
         </div>
-      </div>
+      </form>
     </>
     let submitBtn = <div>
       <button className={`${bs.btn} ${bs["btn-info"]}`} id="submit-button" disabled={!this.state.pwValid}
