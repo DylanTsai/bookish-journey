@@ -91,11 +91,12 @@ export class EnterAvailability extends React.Component<EnterAvailabilityProps, E
 
   /**
    * A start or end date picker
-   * @param isStart - true if this is a start date picker, false if end date picker
+   * @param startOrEnd - "start" if this is a start date picker, "end" if end date picker
    * @param availabilityIdx - index in [state.availabilities] of the Availability 
    * this corresponds to.
    */
-  private renderDatePicker(isStart: boolean, availabilityIdx: number): React.ReactElement {
+  private renderDatePicker(startOrEnd: "start" | "end", availabilityIdx: number): React.ReactElement {
+    let isStart: boolean = startOrEnd == "start";
     let setDate = (isStart: boolean, availabilityIdx: number, date: Date) =>
       this.setState(state => {
         let availabilities = state.allAvailabilities;

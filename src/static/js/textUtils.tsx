@@ -133,18 +133,43 @@ export type TypeAheadOptionRenderHelpers<optionT> = {
   select: () => void
 }
 
-export type TypeAheadSelectionRenderHelper<optionT> = {
+export type TypeAheadSelectionRenderHelpers<optionT> = {
   option: optionT,
   deselect: () => void
 }
 
 export type TypeAheadInputProps<optionT> = {
+  /**
+   * @param input - the search query
+   * @param prevInput - the last query that had its options fully fetched
+   * @param prevOpts - the last fully fetched set of options
+   */
+
   getOptions: (input: string, prevInput: string, prevOpts: optionT[]) => Promise<optionT[]>,
+  /**
+   * @param input - The text input
+   * @param isFetching - true iff the options in optionRenderHelpers are for an old query,
+   * and not for [input]
+   * @param optionRenderHelpers - useful things for rendering options
+   * @param selectionRenderHelpers - useful things for rendering selection
+   */
+
   render: (input: string, isFetching: boolean, onTextChange: (input: string) => void,
     optionRenderHelpers: TypeAheadOptionRenderHelpers<optionT>[],
-    selectionRenderHelpers: TypeAheadSelectionRenderHelper<optionT>[]) => JSX.Element,
+    selectionRenderHelpers: TypeAheadSelectionRenderHelpers<optionT>[]) => JSX.Element,
+
+  /**
+   * Set to true if only one option can be selected at a time
+   */
   onlyOneSelection: boolean,
-  onSelectionChange?: (newSelection, oldSelection) => void
+
+  /**
+   * onChange event for when options are selected or deselected
+   * @param newSelection - the new selection
+   * @param type - "select" if the user selected a new option, otherwise "deselect"
+   * @param changedOption - the option that was selected or deselected
+   */
+  onSelectionChange?: (newSelection: optionT[], type: "select" | "deselect", changedOption: optionT) => void
 }
 
 class OptionWithId<optionT> {
@@ -185,24 +210,44 @@ export class TypeAheadInput<optionT> extends React.Component<TypeAheadInputProps
       selection: []
     }
     this.onTextChange = this.onTextChange.bind(this);
+    this.select = this.select.bind(this);
+    this.deselect = this.deselect.bind(this);
   }
 
+  /**
+   * @returns the user input
+   */
   get input(): string {
     return this.state.input;
   }
 
+  /**
+   * @returns the last input that had its options fully fetched. This is matched
+   * with [lastFetchedOptions].
+   */
   get lastProcessedQuery(): string {
     return this.state.lastProcessedQuery;
   }
 
+  /**
+   * @returns the last set of options that were fully fetched. This is matched
+   * with [lastProcessedQuery].
+   */
   get lastFetchedOptions(): optionT[] {
     return [...this.state.lastFetchedOptions];
   }
 
+  /**
+   * @returns true iff [lastFetchedOptions] does not match up with [state.input];
+   * that is, we are currently fetching new options.
+   */
   get isFetching(): boolean {
     return this.state.input != this.state.lastProcessedQuery;
   }
 
+  /**
+   * @param input - the user input
+   */
   private async onTextChange(input: string): Promise<void> {
     this.setState({
       input: input
@@ -220,28 +265,37 @@ export class TypeAheadInput<optionT> extends React.Component<TypeAheadInputProps
     })
   }
 
+  /**
+   * Selects [opt]. 
+   */
   private select(opt: optionT) {
     let optWId = new OptionWithId(opt);
     let newSelection: OptionWithId<optionT>[] = this.props.onlyOneSelection ? [optWId] : this.state.selection.concat(optWId);
     if (this.props.onSelectionChange) {
-      this.props.onSelectionChange(newSelection, this.state.selection);
+      this.props.onSelectionChange(newSelection.map(opt => opt.value), "select", opt);
     }
     this.setState({ selection: newSelection });
   }
 
+  /**
+   * Removes [optWId] from the selection. 
+   */
   private deselect(optWId: OptionWithId<optionT>) {
     let newSelection = this.state.selection.filter((other) => other.id == optWId.id);
     if (newSelection.length == this.state.selection.length) {
       console.log(`Warning: Tried to deselect "${optWId.value}", but "${optWId.value}" was not in selection.`);
     }
     if (this.props.onSelectionChange) {
-      this.props.onSelectionChange(newSelection, this.state.selection);
+      this.props.onSelectionChange(newSelection.map(opt => opt.value), "deselect", optWId.value);
     }
     this.setState({
       selection: newSelection
     });
   }
 
+  /**
+   * @returns The current selection.
+   */
   get selection(): optionT[] {
     return this.state.selection.map(selWId => selWId.value);
   }
@@ -253,7 +307,7 @@ export class TypeAheadInput<optionT> extends React.Component<TypeAheadInputProps
         select: () => this.select(opt)
       })
     )
-    let selectionRenderHelpers: TypeAheadSelectionRenderHelper<optionT>[] = this.state.selection.map(
+    let selectionRenderHelpers: TypeAheadSelectionRenderHelpers<optionT>[] = this.state.selection.map(
       (optWId) => ({
         option: optWId.value,
         deselect: () => this.deselect(optWId)
