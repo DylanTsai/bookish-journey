@@ -1,5 +1,7 @@
 import ReactDOM from 'react-dom';
 import React from 'react';
+import bs from 'bootstrap/dist/css/bootstrap.min.css';
+import index from '../styles/index.css';
 import { SymbaToolbar } from './symbaToolbar';
 import { CreateUserCreds } from './createProfileComponents/createUserCreds';
 import { EnterAvailability, Availability } from './createProfileComponents/EnterAvailability';
@@ -127,25 +129,33 @@ class CreateProfile extends React.Component<{}, createProfileState> {
   }
 
   render(): React.ReactElement {
-    let updateInfo;
+    let updateInfo, bodyElement;
     switch (this.state.stage) {
       case "user_creds":
         updateInfo = (email: string, pw: string) => this.setState({ email: email, pw: pw })
-        return <CreateUserCreds updateInfo={updateInfo} />
+        bodyElement = <CreateUserCreds updateInfo={updateInfo} />
+        break;
       case "availability":
         updateInfo = (email: string, pw: string) => this.setState({ email: email, pw: pw })
-        return <EnterAvailability updateInfo={updateInfo} />
+        bodyElement = <EnterAvailability updateInfo={updateInfo} />
+        break;
       case "PLACEHOLDER":
         throw Error("UNIMPLEMENTED")
     }
+
+    return <div className={`${bs.row} ${bs['w-100']}`}>{bodyElement}</div>;
   }
 }
-
-
 
 
 let toolbarContainer = document.getElementById("symba-toolbar-container");
 ReactDOM.render(<SymbaToolbar />, toolbarContainer);
 
+// Apply bootstrap classes to main container
+let mainBSClasses = [
+  bs['container-fluid'], bs['d-flex'], bs['justify-content-center'],
+  bs['align-items-center'], bs['h-100'], index["create-profile-main-container"]
+];
 let mainContainer = document.getElementById('create-profile-main-container');
+mainContainer?.classList.add(...mainBSClasses);
 ReactDOM.render(<CreateProfile />, mainContainer);
