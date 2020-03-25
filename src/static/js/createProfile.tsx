@@ -171,8 +171,6 @@ class CreateProfile extends React.Component<{}, createProfileState> {
         updateInfo = (availability: Availability[]) => this.setState({ availability: availability });
         bodyElement = <EnterAvailability updateInfo={updateInfo} renderNextBut={this.renderNextBut} />
         break;
-      case "welcome":
-        throw Error("UNIMPLEMENTED")
     }
 
     return <div className={`${bs.row} ${bs['w-100']}`}>{bodyElement}</div>;
