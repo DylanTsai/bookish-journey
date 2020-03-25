@@ -144,8 +144,8 @@ export type TypeAheadInputProps<optionT> = {
    * @param prevInput - the last query that had its options fully fetched
    * @param prevOpts - the last fully fetched set of options
    */
-
   getOptions: (input: string, prevInput: string, prevOpts: optionT[]) => Promise<optionT[]>,
+
   /**
    * @param input - The text input
    * @param isFetching - true iff the options in optionRenderHelpers are for an old query,
@@ -201,7 +201,7 @@ export class TypeAheadInput<optionT> extends React.Component<TypeAheadInputProps
 
   private lastOptionFetchId: number = 0;
 
-  constructor(props) {
+  constructor(props: TypeAheadInputProps<optionT>) {
     super(props);
     this.state = {
       input: "",
@@ -318,48 +318,38 @@ export class TypeAheadInput<optionT> extends React.Component<TypeAheadInputProps
   }
 }
 
-// export class SkillSearchBox extends React.Component {
+export type TypeAheadInputStaticOptionsProps<optionT> = {
+  fetchOptions: () => Promise<optionT[]>,
+  getOptions: (input: string, allOptions: optionT[], prevInput: string, prevOpts: optionT[]) => optionT[],
+  render: (input: string, isFetching: boolean, onTextChange: (input: string) => void,
+    optionRenderHelpers: TypeAheadOptionRenderHelpers<optionT>[],
+    selectionRenderHelpers: TypeAheadSelectionRenderHelpers<optionT>[]) => JSX.Element,
+  onlyOneSelection: boolean,
+  onSelectionChange?: (newSelection: optionT[], type: "select" | "deselect", changedOption: optionT) => void
+}
 
-//   skillsCache = {}
+export class TypeAheadInputStaticOptions<optionT>
+  extends React.Component<TypeAheadInputStaticOptionsProps<optionT>, TypeAheadInputState<optionT>> {
+  private allOptions: null | [] = null;
+  private typeAheadInput: TypeAheadInput<optionT>;
+  constructor(props) {
+    super(props);
+    let renderProp = (input: string, _: boolean, onTextChange: (input: string) => void,
+      optionRenderHelpers: TypeAheadOptionRenderHelpers<optionT>[],
+      selectionRenderHelpers: TypeAheadSelectionRenderHelpers<optionT>[]) => {
+      let hasNotFetchedOptions = this.allOptions == null;
+      return this.props.render(input, hasNotFetchedOptions, onTextChange, optionRenderHelpers, selectionRenderHelpers);
+    }
+    let getOptionProp = (input: string, prevInput: string, prevOpts: optionT[]) =>
+      Promise.resolve(props.getOptions(input, this.allOptions, prevInput, prevOpts));
+    this.typeAheadInput = new TypeAheadInput<optionT>({
+      getOptions: getOptionProp,
+      render: renderProp,
+      onlyOneSelection: props.onlyOneSelection
+    })
+  }
 
-//   constructor(props) {
-//     super(props);
-//     this.getAndCacheSkills.bind(this);
-//     this.state = {
-//       ready: false
-//     }
-//     this.fetchAllSkills().then(
-//       (allSkills) => {
-//         this.skillsCache[""] = allSkills;
-//         this.setState({ ready: true })
-//       }
-//     )
-//     this.getAndCacheSkills = this.getAndCacheSkills.bind(this);
-//   }
-
-//   fetchAllSkills() {
-//     return Promise.resolve(["rawrrrr", "im an option"]);
-//   }
-
-//   getAndCacheSkills(searchText, prevQuery, oldOptions) {
-//     console.log("skillsCache:");
-//     console.log(this.skillsCache);
-//     if (searchText in this.skillsCache) {
-//       return this.skillsCache[searchText];
-//     }
-//     this.fetchAllSkills();
-//     let options = ["rawrrrr", "im an option"];
-//     this.skillsCache[searchText] = options;
-//     return options;
-//   }
-
-//   render() {
-//     return <OptionSearchBox
-//       getOptions={this.getAndCacheSkills}
-//       optionToHTML={(opt, selectCB) => <button onClick={selectCB}>opt</button>}
-//       selectionToHTML={(sel, deselectCB) => <button onClick={deselectCB}>opt</button>}
-//       onlyOneSelection={false}
-//     />
-
-//   }
-// }
+  render() {
+    return this.typeAheadInput.render()
+  }
+}
