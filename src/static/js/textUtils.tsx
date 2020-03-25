@@ -319,7 +319,7 @@ export class TypeAheadInput<optionT> extends React.Component<TypeAheadInputProps
 }
 
 export type TypeAheadInputStaticOptionsProps<optionT> = {
-  fetchOptions: () => Promise<optionT[]>,
+  fetchAllOptions: () => Promise<optionT[]>,
   getOptions: (input: string, allOptions: optionT[], prevInput: string, prevOpts: optionT[]) => optionT[],
   render: (input: string, isFetching: boolean, onTextChange: (input: string) => void,
     optionRenderHelpers: TypeAheadOptionRenderHelpers<optionT>[],
@@ -330,7 +330,7 @@ export type TypeAheadInputStaticOptionsProps<optionT> = {
 
 export class TypeAheadInputStaticOptions<optionT>
   extends React.Component<TypeAheadInputStaticOptionsProps<optionT>, TypeAheadInputState<optionT>> {
-  private allOptions: null | [] = null;
+  private allOptions: null | optionT[] = null;
   private typeAheadInput: TypeAheadInput<optionT>;
   constructor(props) {
     super(props);
@@ -347,6 +347,10 @@ export class TypeAheadInputStaticOptions<optionT>
       render: renderProp,
       onlyOneSelection: props.onlyOneSelection
     })
+  }
+
+  async componentDidMount() {
+    this.allOptions = await this.props.fetchAllOptions();
   }
 
   render() {
