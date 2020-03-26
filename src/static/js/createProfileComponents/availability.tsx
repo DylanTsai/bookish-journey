@@ -158,15 +158,15 @@ export class EnterAvailability extends React.Component<EnterAvailabilityProps, E
    */
   private renderAvailabilityField(availabilityIdx: number) {
     return <div key={`availability-field-${availabilityIdx}`}>
-      {this.renderDatePicker(true, availabilityIdx)}
-      {this.renderDatePicker(false, availabilityIdx)}
+      {this.renderDatePicker("start", availabilityIdx)}
+      {this.renderDatePicker("end", availabilityIdx)}
       {this.renderHoursSelect(availabilityIdx)}
       {this.dateRangeValidities[availabilityIdx] ? <></> : this.invalidTimeRange}
     </div>
   }
 
   private teardown() {
-    this.props.updateInfo(this.state.allAvailabilities.splice(0, this.state.numAvailabilities));
+    this.props.updateInfo([...this.state.allAvailabilities].splice(0, this.state.numAvailabilities));
   }
 
   render() {

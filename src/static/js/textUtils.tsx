@@ -1,7 +1,7 @@
 import React, { RefObject } from 'react';
 import { StateUpdateMachine } from './stateUtils';
 import regeneratorRuntime from "regenerator-runtime"; // NOTE: we need to keep this here! (I think)
-import { SelectPopup } from './selectBox';
+import { SelectPopup } from './selectPopup';
 import { curryOne, applyPartial } from './typeUtils';
 
 /**

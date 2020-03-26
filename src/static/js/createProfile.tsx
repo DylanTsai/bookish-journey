@@ -1,3 +1,4 @@
+import 'babel-polyfill';
 import ReactDOM from 'react-dom';
 import React from 'react';
 import bs from 'bootstrap/dist/css/bootstrap.min.css';
@@ -5,8 +6,10 @@ import index from '../styles/index.css';
 import { SymbaToolbar } from './symbaToolbar';
 import { CreateUserCreds } from './createProfileComponents/createUserCreds';
 import { EnterAvailability, Availability } from './createProfileComponents/availability';
+import { EnterSkills } from './createProfileComponents/skill';
 
 const stageOrder = [
+  "skill",
   "user_creds",
   "welcome",
   "location",
@@ -14,7 +17,6 @@ const stageOrder = [
   "visa",
   "superpower",
   "expertise",
-  "skill",
   "resume",
   "availability"
 ] as const;
@@ -94,6 +96,7 @@ type createProfileState = {
   stage: stageOpt,
   email: null | string,
   pw: null | string,
+  skills: string[],
   availability: null | Availability[]
 }
 
@@ -106,6 +109,7 @@ class CreateProfile extends React.Component<{}, createProfileState> {
       stage: stageOrder[0],
       email: null,
       pw: null,
+      skills: [],
       availability: null,
     };
     this.navigator = new CreateProfileNavigator(
@@ -153,20 +157,28 @@ class CreateProfile extends React.Component<{}, createProfileState> {
         break;
       case "welcome":
         throw Error("UNIMPLEMENTED");
+        break;
       case "location":
         throw Error("UNIMPLEMENTED");
+        break;
       case "school":
         throw Error("UNIMPLEMENTED");
+        break;
       case "visa":
         throw Error("UNIMPLEMENTED");
+        break;
       case "superpower":
         throw Error("UNIMPLEMENTED");
+        break;
       case "expertise":
         throw Error("UNIMPLEMENTED");
+        break;
       case "skill":
-        throw Error("UNIMPLEMENTED");
+        bodyElement = <EnterSkills updateInfo={skills => this.setState({ skills: skills })} renderSubmitBtn={this.renderNextBut} />
+        break;
       case "resume":
         throw Error("UNIMPLEMENTED");
+        break;
       case "availability":
         updateInfo = (availability: Availability[]) => this.setState({ availability: availability });
         bodyElement = <EnterAvailability updateInfo={updateInfo} renderNextBut={this.renderNextBut} />

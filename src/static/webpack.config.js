@@ -30,6 +30,14 @@ const config = {
                     { loader: "css-modules-typescript-loader" },
                     { loader: "css-loader", options: { modules: true } }
                 ]
+            },
+            {
+                test: /\.(png|jpg)$/i,
+                use: [
+                    {
+                        loader: 'url-loader'
+                    },
+                ],
             }
         ]
     }
