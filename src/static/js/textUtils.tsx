@@ -1,5 +1,8 @@
-import React from 'react';
+import React, { RefObject } from 'react';
 import { StateUpdateMachine } from './stateUtils';
+import regeneratorRuntime from "regenerator-runtime"; // NOTE: we need to keep this here! (I think)
+import { SelectPopup } from './selectBox';
+import { curryOne, applyPartial } from './typeUtils';
 
 /**
  * Class for monitoring state of a text input.
@@ -128,7 +131,7 @@ export class ValidatedTextInputMonitor<T extends keyof any, stateT extends Objec
 }
 
 
-export type TypeAheadOptionRenderHelpers<optionT> = {
+type TypeAheadOptionRenderHelpers<optionT> = {
   option: optionT,
   select: () => void
 }
@@ -138,103 +141,114 @@ export type TypeAheadSelectionRenderHelpers<optionT> = {
   deselect: () => void
 }
 
-export type TypeAheadInputProps<optionT> = {
+
+type TypeAheadInputProps<optionT> = {
   /**
-   * @param input - the search query
-   * @param prevInput - the last query that had its options fully fetched
-   * @param prevOpts - the last fully fetched set of options
+   * The initial input value (to run [getOptions] on in the very beginning).
+   * Defaults to emptry string.
    */
-  getOptions: (input: string, prevInput: string, prevOpts: optionT[]) => Promise<optionT[]>,
+  init?: string
 
   /**
-   * @param input - The text input
-   * @param isFetching - true iff the options in optionRenderHelpers are for an old query,
-   * and not for [input]
-   * @param optionRenderHelpers - useful things for rendering options
-   * @param selectionRenderHelpers - useful things for rendering selection
+   * True if options should be fetched when input is the empty string. 
+   * Otherwise, the options are always set to [] for the empty string.
+   * Defaults to false.
    */
-
-  render: (input: string, isFetching: boolean, onTextChange: (input: string) => void,
-    optionRenderHelpers: TypeAheadOptionRenderHelpers<optionT>[],
-    selectionRenderHelpers: TypeAheadSelectionRenderHelpers<optionT>[]) => JSX.Element,
-
-  /**
-   * Set to true if only one option can be selected at a time
-   */
-  onlyOneSelection: boolean,
-
-  /**
-   * onChange event for when options are selected or deselected
-   * @param newSelection - the new selection
-   * @param type - "select" if the user selected a new option, otherwise "deselect"
-   * @param changedOption - the option that was selected or deselected
-   */
-  onSelectionChange?: (newSelection: optionT[], type: "select" | "deselect", changedOption: optionT) => void
+  getOptionsOnEmptyStr?: boolean
 }
 
-class OptionWithId<optionT> {
-  private static counter = 0;
-  private _id: number;
-  private _value: optionT;
-  constructor(value: optionT) {
-    this._value = value;
-    this._id = ++OptionWithId.counter;
-  }
-
-  get id() {
-    return this._id
-  }
-
-  get value() {
-    return this._value
-  }
-}
-
-type TypeAheadInputState<optionT> = {
-  input: string,
-  lastProcessedQuery: string,
-  lastFetchedOptions: optionT[],
-  selection: OptionWithId<optionT>[]
-}
-
-export class TypeAheadInput<optionT> extends React.Component<TypeAheadInputProps<optionT>, TypeAheadInputState<optionT>> {
-
+/**
+ * The model for [TypeAheadView]. See [TypeAheadView] for more information.
+ * 
+ * [getOptions] - `getOptions input` gets the options corresponding to the 
+ * search query [input].
+ * [optionEq] - True iff [option1] and [option2] are the same option.
+ * [onlyOneSelection] - If true, selecting one option deselects the previous
+ * option, so there is no more than one option selected at a time.
+ * [getOptionsOnEmptyStr] - If True, options should be fetched when input is the 
+ * empty string. Otherwise, an input of "" corresponds to an empty set of options.
+ * Defaults to false.
+ * [initInput] - The input box's initial input. Defaults to "".
+ */
+export class TypeAheadModel<optionT> {
+  private _input: string;
   private lastOptionFetchId: number = 0;
+  private _lastProcessedQuery: string | undefined;
+  private _lastFetchedOptions: optionT[] | undefined;
+  private _selection: optionT[] = [];
+  private onlyOneSelection: boolean;
+  private getOptionsOnEmptyStr: boolean;
+  private getOptions: (input: string) => Promise<optionT[]>;
+  private refreshView: () => void = () => null;
+  optionEq: (a: optionT, b: optionT) => boolean;
 
-  constructor(props: TypeAheadInputProps<optionT>) {
-    super(props);
-    this.state = {
-      input: "",
-      lastProcessedQuery: "",
-      lastFetchedOptions: [],
-      selection: []
-    }
-    this.onTextChange = this.onTextChange.bind(this);
+  constructor(
+    getOptions: (input: string) => Promise<optionT[]>,
+    optionEq: (a: optionT, b: optionT) => boolean,
+    onlyOneSelection: boolean, getOptionsOnEmptyStr: boolean,
+    initInput: string = ""
+  ) {
+    this.onlyOneSelection = onlyOneSelection;
+    this.getOptionsOnEmptyStr = getOptionsOnEmptyStr;
+    this.getOptions = getOptions;
+    this.optionEq = optionEq;
+    this._input = initInput;
+    this.onTextChange(initInput);
+
     this.select = this.select.bind(this);
     this.deselect = this.deselect.bind(this);
+    this.onTextChange = this.onTextChange.bind(this);
+    this.clearInput = this.clearInput.bind(this);
+  }
+
+  /**
+   * `supplyOnInputChange f` binds the first parameter of `f` to the 
+   * typeAheadModel's onTextChange. This is used to [TypeAheadView]
+   * to help render the input.
+   */
+  supplyOnInputChange<ret>(f: ((onInputChange: (input: string) => void) => ret)): ret {
+    return applyPartial<ret>(f, this.onTextChange);
+  }
+
+  /**
+   * Clears the input.
+   */
+  clearInput(): void {
+    this.onTextChange("");
+  }
+
+  /**
+   * Adds a callback that will refresh a view that relies on this typeAheadModel. 
+   * @param refreshView - The callback that refreshes the view. It is 
+   * most likely the React Component's `() => this.forceUpdate()`.
+   */
+  addViewCallBack(refreshView: () => void) {
+    let temp = this.refreshView;
+    this.refreshView = () => { temp; refreshView() };
+    refreshView(); // refresh only for the new callback
   }
 
   /**
    * @returns the user input
    */
   get input(): string {
-    return this.state.input;
+    return this._input;
   }
 
   /**
    * @returns the last input that had its options fully fetched. This is matched
    * with [lastFetchedOptions].
    */
-  get lastProcessedQuery(): string {
-    return this.state.lastProcessedQuery;
+  get lastProcessedQuery(): string | undefined {
+    return this._lastProcessedQuery;
   }
 
   /**
    * @returns the last set of options that were fully fetched. This is matched
    * with [lastProcessedQuery].
    */
-  get lastFetchedOptions(): optionT[] {
-    return [...this.state.lastFetchedOptions];
+  get lastFetchedOptions(): optionT[] | undefined {
+    return this._lastFetchedOptions ? [...this._lastFetchedOptions] : undefined;
   }
 
   /**
@@ -242,118 +256,186 @@ export class TypeAheadInput<optionT> extends React.Component<TypeAheadInputProps
    * that is, we are currently fetching new options.
    */
   get isFetching(): boolean {
-    return this.state.input != this.state.lastProcessedQuery;
+    return this._input != this._lastProcessedQuery;
   }
 
   /**
    * @param input - the user input
    */
   private async onTextChange(input: string): Promise<void> {
-    this.setState({
-      input: input
-    })
+    this._input = input;
     let id = ++this.lastOptionFetchId;
-    let newOptions = await this.props.getOptions(input, this.state.lastProcessedQuery, this.state.lastFetchedOptions);
+    if (input == "" && !this.getOptionsOnEmptyStr) {
+      this._lastProcessedQuery = "";
+      this._lastFetchedOptions = [];
+      this.refreshView();
+      return;
+    }
+    let newOptions = await this.getOptions(input);
     if (id < this.lastOptionFetchId) {
       console.log("onTextChange fetch with optionFetchId=" + id + " is out of date.")
       // then onTextChange was called on a newer input, so we can throw away this change
       return
     }
-    this.setState({
-      lastProcessedQuery: input,
-      lastFetchedOptions: newOptions
-    })
+    this._lastProcessedQuery = input;
+    this._lastFetchedOptions = newOptions;
+    this.refreshView();
   }
 
   /**
    * Selects [opt]. 
    */
   private select(opt: optionT) {
-    let optWId = new OptionWithId(opt);
-    let newSelection: OptionWithId<optionT>[] = this.props.onlyOneSelection ? [optWId] : this.state.selection.concat(optWId);
-    if (this.props.onSelectionChange) {
-      this.props.onSelectionChange(newSelection.map(opt => opt.value), "select", opt);
+    if (this.onlyOneSelection) {
+      this._selection = [opt]
+    } else {
+      let alreadySelected = this._selection.some((other) => this.optionEq(other, opt));
+      if (!alreadySelected) {
+        this._selection.push(opt);
+      }
     }
-    this.setState({ selection: newSelection });
+    this.refreshView();
   }
 
   /**
-   * Removes [optWId] from the selection. 
+   * Removes [opt] from the selection. 
    */
-  private deselect(optWId: OptionWithId<optionT>) {
-    let newSelection = this.state.selection.filter((other) => other.id == optWId.id);
-    if (newSelection.length == this.state.selection.length) {
-      console.log(`Warning: Tried to deselect "${optWId.value}", but "${optWId.value}" was not in selection.`);
+  private deselect(opt: optionT) {
+    let newSelection = this._selection.filter((other) => !this.optionEq(other, opt));
+    if (newSelection.length == this._selection.length) {
+      console.log(`Warning: Tried to deselect "${opt}", but "${opt}" was not in selection.`);
     }
-    if (this.props.onSelectionChange) {
-      this.props.onSelectionChange(newSelection.map(opt => opt.value), "deselect", optWId.value);
-    }
-    this.setState({
-      selection: newSelection
-    });
+    this._selection = newSelection;
+    this.refreshView();
   }
 
   /**
    * @returns The current selection.
    */
   get selection(): optionT[] {
-    return this.state.selection.map(selWId => selWId.value);
+    return [...this._selection];
   }
 
-  render() {
-    let optionRenderHelpers: TypeAheadOptionRenderHelpers<optionT>[] = this.state.lastFetchedOptions.map(
+  /**
+   * @returns information for each option that is helpful in rendering
+   */
+  get optionRenderHelpers(): TypeAheadOptionRenderHelpers<optionT>[] {
+    if (this._lastFetchedOptions === undefined) {
+      return [];
+    }
+    return this._lastFetchedOptions.map(
       (opt) => ({
         option: opt,
         select: () => this.select(opt)
       })
-    )
-    let selectionRenderHelpers: TypeAheadSelectionRenderHelpers<optionT>[] = this.state.selection.map(
-      (optWId) => ({
-        option: optWId.value,
-        deselect: () => this.deselect(optWId)
+    );
+  }
+
+  /**
+   * @returns information for each selected option that is helpful in rendering
+   */
+  get selectionRenderHelpers(): TypeAheadSelectionRenderHelpers<optionT>[] {
+    return this._selection.map(
+      (sel) => ({
+        option: sel,
+        deselect: () => this.deselect(sel)
       })
     );
-    return this.props.render(this.state.input, this.isFetching,
-      this.onTextChange, optionRenderHelpers, selectionRenderHelpers);
   }
 }
 
-export type TypeAheadInputStaticOptionsProps<optionT> = {
-  fetchAllOptions: () => Promise<optionT[]>,
-  getOptions: (input: string, allOptions: optionT[], prevInput: string, prevOpts: optionT[]) => optionT[],
-  render: (input: string, isFetching: boolean, onTextChange: (input: string) => void,
-    optionRenderHelpers: TypeAheadOptionRenderHelpers<optionT>[],
-    selectionRenderHelpers: TypeAheadSelectionRenderHelpers<optionT>[]) => JSX.Element,
-  onlyOneSelection: boolean,
-  onSelectionChange?: (newSelection: optionT[], type: "select" | "deselect", changedOption: optionT) => void
+/**
+ * A modification  of the TypeAheadModel where the asynchronous work is done only
+ * once, at the beginning, to fetch all possible options. Then, [getOptions] always
+ * returns a subset of those options.
+ * Until [fetchAllOptions] finishes, uses the empty list for the set of 
+ * all options.
+ */
+export class TypeAheadStaticOptionsModel<optionT> extends TypeAheadModel<optionT> {
+  private allOptions: optionT[];
+  private fetched: boolean;
+  constructor(fetchAllOptions: () => Promise<optionT[]>,
+    getOptions: (input: string, allOptions: optionT[]) => optionT[],
+    optionEq: (a: optionT, b: optionT) => boolean,
+    onlyOneSelection: boolean, getOptionsOnEmptyStr: boolean,
+    initInput: string = "") {
+    super(
+      (input) => Promise.resolve(getOptions(input, this.allOptions)),
+      optionEq,
+      onlyOneSelection,
+      getOptionsOnEmptyStr,
+      initInput
+    );
+    this.fetched = false;
+    this.allOptions = [];
+    fetchAllOptions().then(
+      (opts) => {
+        this.allOptions = opts;
+        this.fetched = true;
+      }
+    )
+  }
+
+  get isFetching(): boolean {
+    return !this.fetched;
+  }
+
+  /**
+   * Returns all possible options.
+   */
+  get allPossibleOptions(): optionT[] {
+    return this.allOptions;
+  }
 }
 
-export class TypeAheadInputStaticOptions<optionT>
-  extends React.Component<TypeAheadInputStaticOptionsProps<optionT>, TypeAheadInputState<optionT>> {
-  private allOptions: null | optionT[] = null;
-  private typeAheadInput: TypeAheadInput<optionT>;
-  constructor(props) {
+export type TypeAheadViewProps<optionT, inputBoxT extends Element> = {
+  model: TypeAheadModel<optionT>;
+  renderOption: (opt: optionT, isFocused: boolean) => JSX.Element;
+  renderInputBox: (onInputChange: (input: string) => void, inputBoxRef: RefObject<inputBoxT>,
+    setVisibility: (b: boolean) => void) => Element;
+}
+
+/**
+ * Useful for each option. Used as the option type in TypeAheadView's SelectPopup. 
+ */
+type optionInfo<optionT> = {
+  option: optionT,
+  index: number,
+  select: () => void,
+  render: (isFocused: boolean) => JSX.Element
+}
+
+export class TypeAheadView<optionT, inputBoxT extends Element>
+  extends React.Component<TypeAheadViewProps<optionT, inputBoxT>, {}> {
+
+  constructor(props: TypeAheadViewProps<optionT, inputBoxT>) {
     super(props);
-    let renderProp = (input: string, _: boolean, onTextChange: (input: string) => void,
-      optionRenderHelpers: TypeAheadOptionRenderHelpers<optionT>[],
-      selectionRenderHelpers: TypeAheadSelectionRenderHelpers<optionT>[]) => {
-      let hasNotFetchedOptions = this.allOptions == null;
-      return this.props.render(input, hasNotFetchedOptions, onTextChange, optionRenderHelpers, selectionRenderHelpers);
-    }
-    let getOptionProp = (input: string, prevInput: string, prevOpts: optionT[]) =>
-      Promise.resolve(props.getOptions(input, this.allOptions, prevInput, prevOpts));
-    this.typeAheadInput = new TypeAheadInput<optionT>({
-      getOptions: getOptionProp,
-      render: renderProp,
-      onlyOneSelection: props.onlyOneSelection
-    })
   }
 
-  async componentDidMount() {
-    this.allOptions = await this.props.fetchAllOptions();
+  componentDidMount() {
+    this.props.model.addViewCallBack(() => this.forceUpdate());
   }
 
   render() {
-    return this.typeAheadInput.render()
+    return <SelectPopup
+      renderAnchor={this.props.model.supplyOnInputChange(curryOne(this.props.renderInputBox))}
+      renderOption={(opt: optionInfo<optionT>, isSelected: boolean) => opt.render(isSelected)}
+      select={(opt: optionInfo<optionT>) => opt.select()}
+      options={this.props.model.optionRenderHelpers.map(
+        (helper, i) => ({
+          option: helper.option,
+          index: i,
+          select: helper.select, // TODO clear input on select
+          render: (isFocused) => this.props.renderOption(helper.option, isFocused)
+        })
+      )}
+      onEnterSelect={this.props.model.clearInput}
+      isLoading={() => this.props.model.isFetching}
+      virtualizedListProps={{
+        height: 60,
+        rowHeight: 20
+      }}
+    />;
   }
+
 }
