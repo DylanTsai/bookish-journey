@@ -139,9 +139,9 @@ class CreateProfile extends React.Component<{}, createProfileState> {
    * @param extraClassStrings - Optional space-separated list of class strings to 
    * add further styles onto the button.
    */
-  renderNextBut(teardown: () => void, titleTxt: string, isDisabled: boolean, extraClassStrings: string = "") {
+  renderNextBut(teardown: () => void, titleTxt: string, isDisabled: boolean) {
     return <button
-      className={index.navNextBtn + ' ' + extraClassStrings}
+      className={index.navNextBtn + ` ${bs.btn} ${bs["btn-info"]}`}
       disabled={isDisabled}
       onClick={() => { teardown(); this.navigator.navToNext() }}>
       {titleTxt}
