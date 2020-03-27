@@ -7,15 +7,16 @@ import { SymbaToolbar } from './symbaToolbar';
 import { CreateUserCreds } from './createProfileComponents/createUserCreds';
 import { EnterAvailability, Availability } from './createProfileComponents/availability';
 import { EnterSkills } from './createProfileComponents/skill';
+import { Superpowers } from './createProfileComponents/superpowers';
 
 const stageOrder = [
+  "superpower",
   "skill",
   "user_creds",
   "welcome",
   "location",
   "school",
   "visa",
-  "superpower",
   "expertise",
   "resume",
   "availability"
@@ -168,7 +169,7 @@ class CreateProfile extends React.Component<{}, createProfileState> {
         throw Error("UNIMPLEMENTED");
         break;
       case "superpower":
-        throw Error("UNIMPLEMENTED");
+        bodyElement = <Superpowers />
         break;
       case "expertise":
         throw Error("UNIMPLEMENTED");
