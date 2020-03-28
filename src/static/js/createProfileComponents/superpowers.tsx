@@ -23,7 +23,7 @@ export class Superpowers extends React.Component {
             <img src="https://via.placeholder.com/100"/>
           </div>
         </div>
-        <div className={bs.row}>
+        <div className={`${bs.row} ${index['superpowers-row']}`}>
           <div className={`${bs['col-lg-12']} ${bs['col-md-12']}`}>
             <h3>Tell us about your superpowers and<br /> positions of interest</h3>
           </div>
@@ -33,8 +33,8 @@ export class Superpowers extends React.Component {
             <div className={`${bs.row} ${index['superpowers-row']}`}>
               {
                 row.map(title => 
-                  <div className={`${bs['col-lg-4']} ${bs['col-md-4']} ${index['power-card']}`}>
-                    <div className={`${bs.card} ${bs.shadow}`}>
+                  <div className={`${bs['col-lg-4']} ${bs['col-md-4']}`}>
+                    <div className={`${bs.card} ${bs.shadow} ${index['power-card']}`}>
                       <div className={`${bs['card-body']} ${bs['text-center']}`}>
                         <img src="https://via.placeholder.com/100"/>
                         <h5>{title}</h5>
@@ -50,7 +50,7 @@ export class Superpowers extends React.Component {
           <div className={index.spacer}></div>
         </div>
         <div className={bs.row}>
-          <div className={`${bs['col-lg-12']} ${bs['col-md-12']}`}>
+          <div className={`${bs['col-lg-12']} ${bs['col-md-12']} ${index['superpowers-row']}`}>
             <button className={`${bs.btn} ${bs['btn-link']}`}>Back</button>
             <button className={`${bs.btn} ${bs['btn-primary']}`}>Next</button>
           </div>
