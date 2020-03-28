@@ -1,22 +1,61 @@
 import * as React from 'react';
 import KeyboardArrowLeftOutlinedIcon from '@material-ui/icons/KeyboardArrowLeftOutlined';
+import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 
 import bs from 'bootstrap/dist/css/bootstrap.min.css';
 import index from '../../styles/index.css';
 import styleConsts from '../../styles/constants.css';
 
-let categories = ["Engineering", "Marketing", "Business"];
+type catData = {
+  name: string,
+  imgUrl: string,
+  isSelected: boolean
+}
 
-let catsByRow: [[string]] = [];
-categories.forEach((el, idx) => {
-  if (idx % 3 == 0) {
-    catsByRow.push([el]);
-  } else {
-    catsByRow[catsByRow.length - 1].push(el);
+const initCategories: catData[] = [
+  {
+    name: "Engineering",
+    imgUrl: "https://via.placeholder.com/100",
+    isSelected: false
+  },
+  {
+    name: "Marketing",
+    imgUrl: "https://via.placeholder.com/100",
+    isSelected: false
+  },
+  {
+    name: "Business",
+    imgUrl: "https://via.placeholder.com/100",
+    isSelected: false
   }
-});
+];
 
-export class Superpowers extends React.Component {
+type superpowersState = {
+  catsByRow: catData[][]
+}
+
+export class Superpowers extends React.Component<{}, superpowersState> {
+  constructor(props) {
+    super(props);
+
+    let catsByRow: catData[][] = [];
+    initCategories.forEach((el, idx) => {
+      if (idx % 3 == 0) {
+        catsByRow.push([el]);
+      } else {
+        catsByRow[catsByRow.length - 1].push(el);
+      }
+    });
+
+    this.state = { catsByRow };
+  }
+
+  private toggleSelection(row: number, col: number) {
+    let copy = [...this.state.catsByRow];
+    copy[row][col].isSelected = !copy[row][col].isSelected;
+    this.setState({ catsByRow: copy });
+  }
+
   render() {
     return <>
       <div className={`${bs['col-lg-12']} ${bs['col-md-12']} ${bs['text-center']}`}>
@@ -31,19 +70,28 @@ export class Superpowers extends React.Component {
           </div>
         </div>
         {
-          catsByRow.map(row =>
+          this.state.catsByRow.map((row, rowIdx) =>
             <div className={`${bs.row} ${index['superpowers-row']}`}>
               {
-                row.map(title => 
-                  <div className={`${bs['col-lg-4']} ${bs['col-md-4']}`}>
-                    <div className={`${bs.card} ${bs.shadow} ${index['power-card']}`}>
-                      <div className={`${bs['card-body']} ${bs['text-center']}`}>
-                        <img src="https://via.placeholder.com/100"/>
-                        <h5>{title}</h5>
+                row.map((category, colIdx) => {
+                  let selectedClass = category.isSelected ? index['power-card-selected'] : index['power-card'];
+                  let toggleSelect = () => this.toggleSelection(rowIdx, colIdx);
+
+                  return <div className={`${bs['col-lg-4']} ${bs['col-md-4']}`}>
+                    <div className={`${bs.card} ${bs.shadow} ${selectedClass}`} onClick={toggleSelect}>
+                      <div className={`${bs['card-body']} ${bs['text-center']} ${bs['d-flex']} ${bs['flex-column']} ${bs['justify-content-between']}`}>
+                        <div style={{height: "100px"}}>
+                        {
+                          category.isSelected
+                          ? <CheckCircleOutlineIcon style={{color: "#17b298", fontSize: 90}}/>
+                          : <img src={category.imgUrl}/>
+                        }  
+                        </div>
+                        <h6>{category.name}</h6>
                       </div>
                     </div>
-                  </div>
-                )
+                  </div>;
+                })
               }
             </div>
           )

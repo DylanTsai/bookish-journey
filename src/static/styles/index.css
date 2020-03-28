@@ -29,6 +29,19 @@
 
 .power-card {
   border-radius: 10px;
+  min-height: 200px;
+}
+
+.power-card:hover {
+  background: #f2f2f4;
+}
+
+.power-card-selected {
+  border-radius: 10px;
+  min-height: 200px;
+  
+  background: #17b29826;
+  border: 1px solid #17b298;
 }
 
 .right-nav-list a {
