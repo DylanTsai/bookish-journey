@@ -3,6 +3,7 @@ import { Key } from 'ts-keycode-enum';
 import { List } from 'react-virtualized';
 import { ListPropsOmitGridCoreProps } from './virtualization'
 import { StrictOmit } from './typeUtils'
+import * as A from '../styles/index.css'
 // @ts-ignore
 import TempLoadingSpinner from '../assets/symba-full-name.png';
 
@@ -222,23 +223,19 @@ export class SelectPopup<optionT, anchorT extends Element>
       return anchor;
     }
 
-    let popup = this.props.isLoading() ? <TempLoadingSpinner /> :
+    let width = this.anchorRef.current ? this.anchorRef.current.clientWidth : 0;
+
+    let popup = this.props.isLoading && this.props.isLoading() ? <TempLoadingSpinner /> :
       <List
         {...this.props.virtualizedListProps}
         rowRenderer={this.renderOptionContainer}
         rowCount={this.props.options.length}
         scrollToIndex={this.state.focusedIdx}
-        width={this.anchorRef.current.clientWidth}
+        width={width}
       />;
     return <>
       {anchor}
-      <List
-        {...this.props.virtualizedListProps}
-        rowRenderer={this.renderOptionContainer}
-        rowCount={this.props.options.length}
-        scrollToIndex={this.state.focusedIdx}
-        width={this.anchorRef.current.clientWidth}
-      />
+      {popup}
     </>
   }
 
