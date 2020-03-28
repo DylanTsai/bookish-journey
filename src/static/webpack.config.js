@@ -1,5 +1,7 @@
 const webpack = require('webpack');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const config = {
+    plugins: [new MiniCssExtractPlugin()],
     entry: {
         // TODO: Add a line here for every source file created
         test: __dirname + '/js/test.js',
