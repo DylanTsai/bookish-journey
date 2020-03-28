@@ -1,4 +1,6 @@
 import * as React from 'react';
+import KeyboardArrowLeftOutlinedIcon from '@material-ui/icons/KeyboardArrowLeftOutlined';
+
 import bs from 'bootstrap/dist/css/bootstrap.min.css';
 import index from '../../styles/index.css';
 import styleConsts from '../../styles/constants.css';
@@ -51,8 +53,13 @@ export class Superpowers extends React.Component {
         </div>
         <div className={bs.row}>
           <div className={`${bs['col-lg-12']} ${bs['col-md-12']} ${index['superpowers-row']}`}>
-            <button className={`${bs.btn} ${bs['btn-link']}`}>Back</button>
-            <button className={`${bs.btn} ${bs['btn-primary']}`}>Next</button>
+            <button className={`${bs.btn} ${bs['btn-link']}`}>
+              <KeyboardArrowLeftOutlinedIcon />
+              Back
+            </button>
+            <button className={`${bs.btn} ${bs['btn-primary']}`}>
+              Next
+            </button>
           </div>
         </div>
       </div>

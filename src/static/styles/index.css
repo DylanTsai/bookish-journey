@@ -30,3 +30,7 @@
 .power-card {
   border-radius: 10px;
 }
+
+.right-nav-list a {
+  margin-left: 10px;
+}
