@@ -3,7 +3,7 @@ import { Key } from 'ts-keycode-enum';
 import { List } from 'react-virtualized';
 import { ListPropsOmitGridCoreProps } from './virtualization'
 import { StrictOmit } from './typeUtils'
-import * as A from '../styles/index.css'
+
 // @ts-ignore
 import TempLoadingSpinner from '../assets/symba-full-name.png';
 

@@ -141,22 +141,6 @@ export type TypeAheadSelectionRenderHelpers<optionT> = {
   deselect: () => void
 }
 
-
-type TypeAheadInputProps<optionT> = {
-  /**
-   * The initial input value (to run [getOptions] on in the very beginning).
-   * Defaults to emptry string.
-   */
-  init?: string
-
-  /**
-   * True if options should be fetched when input is the empty string. 
-   * Otherwise, the options are always set to [] for the empty string.
-   * Defaults to false.
-   */
-  getOptionsOnEmptyStr?: boolean
-}
-
 /**
  * The model for [TypeAheadView]. See [TypeAheadView] for more information.
  * 
@@ -180,13 +164,15 @@ export class TypeAheadModel<optionT> {
   private getOptionsOnEmptyStr: boolean;
   private getOptions: (input: string) => Promise<optionT[]>;
   private refreshView: () => void = () => null;
+  private refreshOptionsOnSelect: boolean = true;
   optionEq: (a: optionT, b: optionT) => boolean;
 
   constructor(
     getOptions: (input: string) => Promise<optionT[]>,
     optionEq: (a: optionT, b: optionT) => boolean,
     onlyOneSelection: boolean, getOptionsOnEmptyStr: boolean,
-    initInput: string = ""
+    initInput: string = "",
+    refreshOptionsOnSelect = true,
   ) {
     this.onlyOneSelection = onlyOneSelection;
     this.getOptionsOnEmptyStr = getOptionsOnEmptyStr;
@@ -194,11 +180,13 @@ export class TypeAheadModel<optionT> {
     this.optionEq = optionEq;
     this._input = initInput;
     this.onTextChange(initInput);
+    this.refreshOptionsOnSelect = this.refreshOptionsOnSelect;
 
     this.select = this.select.bind(this);
     this.deselect = this.deselect.bind(this);
     this.onTextChange = this.onTextChange.bind(this);
     this.clearInput = this.clearInput.bind(this);
+    this.refreshView = this.refreshView.bind(this);
   }
 
   /**
@@ -285,7 +273,7 @@ export class TypeAheadModel<optionT> {
   /**
    * Selects [opt]. 
    */
-  private select(opt: optionT) {
+  private select(opt: optionT): Promise<void> {
     if (this.onlyOneSelection) {
       this._selection = [opt]
     } else {
@@ -294,7 +282,11 @@ export class TypeAheadModel<optionT> {
         this._selection.push(opt);
       }
     }
-    this.refreshView();
+    if (this.refreshOptionsOnSelect) {
+      return this.onTextChange(this._input).then(this.refreshView);
+    } else {
+      return Promise.resolve(this.refreshView());
+    }
   }
 
   /**
@@ -306,7 +298,11 @@ export class TypeAheadModel<optionT> {
       console.log(`Warning: Tried to deselect "${opt}", but "${opt}" was not in selection.`);
     }
     this._selection = newSelection;
-    this.refreshView();
+    if (this.refreshOptionsOnSelect) {
+      return this.onTextChange(this._input).then(this.refreshView);
+    } else {
+      return Promise.resolve(this.refreshView());
+    }
   }
 
   /**
