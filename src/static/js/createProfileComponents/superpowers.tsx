@@ -30,11 +30,16 @@ const initCategories: catData[] = [
   }
 ];
 
-type superpowersState = {
+export type SuperpowersProps = {
+  updateInfo: (selectedCats: string[]) => void,
+  renderNextBut
+}
+
+export type SuperpowersState = {
   catsByRow: catData[][]
 }
 
-export class Superpowers extends React.Component<{}, superpowersState> {
+export class Superpowers extends React.Component<SuperpowersProps, SuperpowersState> {
   constructor(props) {
     super(props);
 
@@ -57,6 +62,12 @@ export class Superpowers extends React.Component<{}, superpowersState> {
   }
 
   render() {
+    let teardown = () => {
+      let selectedCatNames = this.state.catsByRow.flat().filter(cat => cat.isSelected).map(c => c.name);
+      this.props.updateInfo(selectedCatNames);
+    };
+    let nextBtn = this.props.renderNextBut(teardown, "Next", false);
+
     return <>
       <div className={`${bs['col-lg-12']} ${bs['col-md-12']} ${bs['text-center']}`}>
         <div className={bs.row}>
@@ -105,9 +116,7 @@ export class Superpowers extends React.Component<{}, superpowersState> {
               <KeyboardArrowLeftOutlinedIcon />
               Back
             </button>
-            <button className={`${bs.btn} ${bs['btn-primary']}`}>
-              Next
-            </button>
+            { nextBtn }
           </div>
         </div>
       </div>
