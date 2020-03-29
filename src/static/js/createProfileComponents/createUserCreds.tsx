@@ -135,9 +135,7 @@ export class CreateUserCreds extends React.Component<CreateUserCredsProps, Creat
     let isDisabled = !this.state.pwValid || !this.state.emailValid || this.nameMonitor.isEmpty()
     console.log("is name empty?");
     console.log(this.nameMonitor.isEmpty());
-    let submitBtn = this.props.renderNextBut(
-      teardown, "Create Account", isDisabled, `${bs.btn} ${bs["btn-info"]}`
-    );
+    let submitBtn = this.props.renderNextBut(teardown, "Create Account", isDisabled);
 
     return (
       <div className={`${bs.card} ${bs['w-100']} ${bs.shadow} ${bs['text-center']}`}>

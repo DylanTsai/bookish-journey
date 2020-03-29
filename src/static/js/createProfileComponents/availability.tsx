@@ -14,7 +14,7 @@ export interface Availability {
 
 export type EnterAvailabilityProps = {
   updateInfo: (availability: Availability[]) => void;
-  renderNextBut: (teardown: () => void, titleTxt: string, isDisabled: boolean, extraClassStrings?: string) => JSX.Element;
+  renderNextBut: (teardown: () => void, titleTxt: string, isDisabled: boolean) => JSX.Element;
 }
 
 type EnterAvailabilityState = {

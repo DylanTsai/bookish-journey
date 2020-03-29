@@ -4,17 +4,46 @@
 }
 
 .create-profile-main-container {
-  max-width: 550px;
+  max-width: 800px;
 }
 
 .create-profile-main-container form {
   font-family: 'Open Sans', sans-serif;
   margin-top: 15px;
   background: #efeff1;
-  max-width: 600px;
+  max-width: 800px;
 }
 
 .navNextBtn {
   background: #1ebad6;
   border-radius: 2px;
+}
+
+.spacer {
+  height: 100px;
+}
+
+.superpowers-row {
+  margin-top: 20px;
+}
+
+.power-card {
+  border-radius: 10px;
+  min-height: 200px;
+}
+
+.power-card:hover {
+  background: #f2f2f4;
+}
+
+.power-card-selected {
+  border-radius: 10px;
+  min-height: 200px;
+  
+  background: #17b29826;
+  border: 1px solid #17b298;
+}
+
+.right-nav-list a {
+  margin-left: 10px;
 }

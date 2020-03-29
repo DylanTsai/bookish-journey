@@ -7,15 +7,16 @@ import { SymbaToolbar } from './symbaToolbar';
 import { CreateUserCreds } from './createProfileComponents/createUserCreds';
 import { EnterAvailability, Availability } from './createProfileComponents/availability';
 import { EnterSkills } from './createProfileComponents/skill';
+import { Superpowers } from './createProfileComponents/superpowers';
 
 const stageOrder = [
+  "superpower",
   "skill",
   "user_creds",
   "welcome",
   "location",
   "school",
   "visa",
-  "superpower",
   "expertise",
   "resume",
   "availability"
@@ -97,7 +98,8 @@ type createProfileState = {
   email: null | string,
   pw: null | string,
   skills: string[],
-  availability: null | Availability[]
+  availability: null | Availability[],
+  selectedCats: string[]
 }
 
 class CreateProfile extends React.Component<{}, createProfileState> {
@@ -111,6 +113,7 @@ class CreateProfile extends React.Component<{}, createProfileState> {
       pw: null,
       skills: [],
       availability: null,
+      selectedCats: []
     };
     this.navigator = new CreateProfileNavigator(
       () => this.state.stage,
@@ -139,9 +142,9 @@ class CreateProfile extends React.Component<{}, createProfileState> {
    * @param extraClassStrings - Optional space-separated list of class strings to 
    * add further styles onto the button.
    */
-  renderNextBut(teardown: () => void, titleTxt: string, isDisabled: boolean, extraClassStrings: string = "") {
+  renderNextBut(teardown: () => void, titleTxt: string, isDisabled: boolean) {
     return <button
-      className={index.navNextBtn + ' ' + extraClassStrings}
+      className={index.navNextBtn + ` ${bs.btn} ${bs["btn-info"]}`}
       disabled={isDisabled}
       onClick={() => { teardown(); this.navigator.navToNext() }}>
       {titleTxt}
@@ -152,8 +155,8 @@ class CreateProfile extends React.Component<{}, createProfileState> {
     let updateInfo, bodyElement;
     switch (this.state.stage) { // set bodyElement
       case "user_creds":
-        updateInfo = (email: string, pw: string) => this.setState({ email: email, pw: pw })
-        bodyElement = <CreateUserCreds updateInfo={updateInfo} renderNextBut={this.renderNextBut} />
+        updateInfo = (email: string, pw: string) => this.setState({ email: email, pw: pw });
+        bodyElement = <CreateUserCreds updateInfo={updateInfo} renderNextBut={this.renderNextBut} />;
         break;
       case "welcome":
         throw Error("UNIMPLEMENTED");
@@ -168,7 +171,8 @@ class CreateProfile extends React.Component<{}, createProfileState> {
         throw Error("UNIMPLEMENTED");
         break;
       case "superpower":
-        throw Error("UNIMPLEMENTED");
+        updateInfo = (selectedCats: string[]) => this.setState({ selectedCats });
+        bodyElement = <Superpowers updateInfo={updateInfo} renderNextBut={this.renderNextBut} />
         break;
       case "expertise":
         throw Error("UNIMPLEMENTED");
