@@ -46,7 +46,8 @@ CREATE TABLE "Position" (
   "end_date" date,
   "is_part_time" boolean,
   "location" varchar(500),
-  "description" varchar(1000)
+  "description" varchar(1000),
+  "challenge" int
 );
 
 CREATE TABLE "PositionApplicants" (
@@ -155,6 +156,8 @@ ALTER TABLE "CompletedChallenge" ADD FOREIGN KEY ("intern") REFERENCES "InternPr
 ALTER TABLE "CompletedChallenge" ADD FOREIGN KEY ("challenge") REFERENCES "Challenge" ("challenge_id");
 
 ALTER TABLE "Position" ADD FOREIGN KEY ("company") REFERENCES "Company" ("company_id");
+
+ALTER TABLE "Position" ADD FOREIGN KEY ("challenge") REFERENCES "Challenge" ("challenge_id");
 
 ALTER TABLE "PositionApplicants" ADD FOREIGN KEY ("applicant") REFERENCES "InternProfile" ("intern_id");
 
