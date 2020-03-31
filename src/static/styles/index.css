@@ -47,3 +47,20 @@
 .right-nav-list a {
   margin-left: 10px;
 }
+
+.selected-skill {
+  display: inline-block;
+  background: #1ebad6;
+  color: white;
+  padding: 10px;
+  border-radius: 4px;
+  margin: 10px 10px 0 0;
+}
+
+.selected-skill span {
+  margin-right: 3px;
+}
+
+.skillsContainer > div {
+  margin-bottom: 30px;
+}

@@ -200,6 +200,16 @@ export class SelectPopup<optionT, anchorT extends Element>
   }
 
   /**
+   * Renders a single inactive row to indicate the list is empty.
+   */
+  private renderEmptyContainer(): JSX.Element {
+    return <div style={{ textAlign: 'center', color: '#979797', height: '100%', display: 'flex' }}>
+      <span style={{ margin: 'auto auto' }}>No results...</span>
+    </div>
+  }
+
+
+  /**
    * Renders a wrapper around [inner] that provides styling and key event handling.
    */
   private renderPopupWrapper(inner: JSX.Element): JSX.Element {
@@ -232,6 +242,7 @@ export class SelectPopup<optionT, anchorT extends Element>
         rowCount={this.props.options.length}
         scrollToIndex={this.state.focusedIdx}
         width={width}
+        noRowsRenderer={this.renderEmptyContainer}
       />;
     return <>
       {anchor}

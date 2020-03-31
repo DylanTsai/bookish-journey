@@ -8,6 +8,7 @@ import { CreateUserCreds } from './createProfileComponents/createUserCreds';
 import { EnterAvailability, Availability } from './createProfileComponents/availability';
 import { EnterSkills } from './createProfileComponents/skill';
 import { Superpowers } from './createProfileComponents/superpowers';
+import { clJoin } from './stringUtils';
 
 const stageOrder = [
   "availability",
@@ -144,7 +145,7 @@ class CreateProfile extends React.Component<{}, createProfileState> {
    */
   renderNextBut(teardown: () => void, titleTxt: string, isDisabled: boolean) {
     return <button
-      className={index.navNextBtn + ` ${bs.btn} ${bs["btn-info"]}`}
+      className={clJoin({'bs': ['btn', 'btn-info'], 'index': ['navNextBtn']})}
       disabled={isDisabled}
       onClick={() => { teardown(); this.navigator.navToNext() }}>
       {titleTxt}
@@ -189,7 +190,7 @@ class CreateProfile extends React.Component<{}, createProfileState> {
         break;
     }
 
-    return <div className={`${bs.row} ${bs['w-100']}`}>{bodyElement}</div>;
+    return <div className={clJoin({'bs': ['row', 'w-100']})}>{bodyElement}</div>;
   }
 }
 

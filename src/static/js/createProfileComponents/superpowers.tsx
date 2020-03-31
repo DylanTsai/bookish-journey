@@ -5,6 +5,7 @@ import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import bs from 'bootstrap/dist/css/bootstrap.min.css';
 import index from '../../styles/index.css';
 import styleConsts from '../../styles/constants.css';
+import { clJoin } from '../stringUtils';
 
 type catData = {
   name: string,
@@ -69,28 +70,28 @@ export class Superpowers extends React.Component<SuperpowersProps, SuperpowersSt
     let nextBtn = this.props.renderNextBut(teardown, "Next", false);
 
     return <>
-      <div className={`${bs['col-lg-12']} ${bs['col-md-12']} ${bs['text-center']}`}>
+      <div className={clJoin({'bs': ['col-lg-12', 'col-md-12', 'text-center']})}>
         <div className={bs.row}>
-          <div id="top-icon" className={`${bs['col-lg-12']} ${bs['col-md-12']}`}>
+          <div id="top-icon" className={clJoin({'bs': ['col-lg-12', 'col-md-12']})}>
             <img src="https://via.placeholder.com/100"/>
           </div>
         </div>
-        <div className={`${bs.row} ${index['superpowers-row']}`}>
-          <div className={`${bs['col-lg-12']} ${bs['col-md-12']}`}>
+        <div className={clJoin({'bs': ['row'], 'index': ['superpowers-row']})}>
+          <div className={clJoin({'bs': ['col-lg-12', 'col-md-12']})}>
             <h3>Tell us about your superpowers and<br /> positions of interest</h3>
           </div>
         </div>
         {
           this.state.catsByRow.map((row, rowIdx) =>
-            <div className={`${bs.row} ${index['superpowers-row']}`}>
+            <div className={clJoin({'bs': ['row'], 'index': ['superpowers-row']})}>
               {
                 row.map((category, colIdx) => {
                   let selectedClass = category.isSelected ? index['power-card-selected'] : index['power-card'];
                   let toggleSelect = () => this.toggleSelection(rowIdx, colIdx);
 
-                  return <div className={`${bs['col-lg-4']} ${bs['col-md-4']}`}>
-                    <div className={`${bs.card} ${bs.shadow} ${selectedClass}`} onClick={toggleSelect}>
-                      <div className={`${bs['card-body']} ${bs['text-center']} ${bs['d-flex']} ${bs['flex-column']} ${bs['justify-content-between']}`}>
+                  return <div className={clJoin({'bs': ['col-lg-4', 'col-md-4']})}>
+                    <div className={clJoin({'bs': ['card', 'shadow']}) + ' ' + selectedClass} onClick={toggleSelect}>
+                      <div className={clJoin({'bs': ['card-body', 'text-center', 'd-flex', 'flex-column', 'justify-content-between']})}>
                         <div style={{height: "100px"}}>
                         {
                           category.isSelected
@@ -111,8 +112,8 @@ export class Superpowers extends React.Component<SuperpowersProps, SuperpowersSt
           <div className={index.spacer}></div>
         </div>
         <div className={bs.row}>
-          <div className={`${bs['col-lg-12']} ${bs['col-md-12']} ${index['superpowers-row']}`}>
-            <button className={`${bs.btn} ${bs['btn-link']}`}>
+          <div className={clJoin({'bs': ['col-lg-12', 'col-md-12'], 'index': ['superpowers-row']})}>
+            <button className={clJoin({'bs': ['btn', 'btn-link']})}>
               <KeyboardArrowLeftOutlinedIcon />
               Back
             </button>

@@ -3,6 +3,7 @@ import bs from 'bootstrap/dist/css/bootstrap.min.css';
 import styleConsts from '../../styles/constants.css';
 import { ValidatedTextInputMonitor, ValidationResults, TextInputMonitor } from '../textUtils';
 import { StateUpdateMachine } from '../stateUtils';
+import { clJoin } from '../stringUtils';
 
 type EmReqs = "em_is_valid";
 
@@ -138,9 +139,9 @@ export class CreateUserCreds extends React.Component<CreateUserCredsProps, Creat
     let submitBtn = this.props.renderNextBut(teardown, "Create Account", isDisabled);
 
     return (
-      <div className={`${bs.card} ${bs['w-100']} ${bs.shadow} ${bs['text-center']}`}>
+      <div className={clJoin({'bs': ['card', 'w-100', 'shadow', 'text-center']})}>
         <div className={bs['card-body']}>
-          <img className={`${bs['mx-auto']} ${bs['d-block']}`} src="/dist/img/symba-s@1x.png" width={50} />
+          <img className={clJoin({'bs': ['mx-auto', 'd-block']})} src="/dist/img/symba-s@1x.png" width={50} />
           <h4 className={bs['card-title']}>Welcome to Symba</h4>
           {name}
           {email}
