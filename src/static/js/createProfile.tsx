@@ -7,11 +7,11 @@ import { SymbaToolbar } from './symbaToolbar';
 import { CreateUserCreds } from './createProfileComponents/createUserCreds';
 import { EnterAvailability, Availability } from './createProfileComponents/availability';
 import { EnterSkills, skill } from './createProfileComponents/skill';
-import { Superpowers } from './createProfileComponents/superpowers';
+import { Superpowers, Superpower } from './createProfileComponents/superpowers';
 import { clJoin } from './stringUtils';
+import { Concentration, concentration } from './createProfileComponents/concentration';
 
 const stageOrder = [
-  "availability",
   "superpower",
   "skill",
   "user_creds",
@@ -19,7 +19,6 @@ const stageOrder = [
   "location",
   "school",
   "visa",
-  "expertise",
   "resume"
 ] as const;
 
@@ -100,7 +99,8 @@ type createProfileState = {
   pw: null | string,
   skills: skill[],
   availability: null | Availability[],
-  selectedCats: string[]
+  selectedCats: Superpower[],
+  selectedConcentrations: concentration[]
 }
 
 class CreateProfile extends React.Component<{}, createProfileState> {
@@ -114,7 +114,8 @@ class CreateProfile extends React.Component<{}, createProfileState> {
       pw: null,
       skills: [],
       availability: null,
-      selectedCats: []
+      selectedCats: [],
+      selectedConcentrations: []
     };
     this.navigator = new CreateProfileNavigator(
       () => this.state.stage,
@@ -172,11 +173,18 @@ class CreateProfile extends React.Component<{}, createProfileState> {
         throw Error("UNIMPLEMENTED");
         break;
       case "superpower":
-        updateInfo = (selectedCats: string[]) => this.setState({ selectedCats });
+        updateInfo = (selectedCats: Superpower[]) => this.setState({ selectedCats });
         bodyElement = <Superpowers updateInfo={updateInfo} renderNextBut={this.renderNextBut} />
         break;
       case "expertise":
-        throw Error("UNIMPLEMENTED");
+        if (this.state.selectedCats.length == 0) {
+          this.navigator.navToNext();
+          return <></>;
+        }
+        updateInfo = (concentrations: concentration[]) => this.setState({ selectedConcentrations: concentrations });
+        bodyElement = <Concentration updateInfo={updateInfo}
+          renderNextBut={this.renderNextBut}
+          selectedSuperpowers={this.state.selectedCats} />
         break;
       case "skill":
         bodyElement = <EnterSkills updateInfo={skills => this.setState({ skills: skills })} renderSubmitBtn={this.renderNextBut} />
