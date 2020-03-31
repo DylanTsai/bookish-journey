@@ -29,54 +29,56 @@ export type EnterAvailabilityProps = {
   renderNextBut: (teardown: () => void, titleTxt: string, isDisabled: boolean) => JSX.Element;
 }
 
+type rangeWithValidity = {
+  // is true iff state.availabilities[i] has a start date earlier than its end date.
+  validity: boolean;
+  availability: Availability;
+}
+
 type EnterAvailabilityState = {
-  // All entered availabilities
-  allAvailabilities: Availability[];
-  /**
-   * How many of the entered availabilities will be submitted. Only the first
-   * [numAvailabilities] entries in [availabilities] will be submitted.
-  */
-  numAvailabilities: number
+  availabilities: rangeWithValidity[];
 }
 
 export class EnterAvailability extends React.Component<EnterAvailabilityProps, EnterAvailabilityState> {
 
-  // dateRangeValidities[i] is true iff state.availabilities[i] has a start date
-  // earlier than its end date.
-  private dateRangeValidities: boolean[];
-
   constructor(props: EnterAvailabilityProps) {
     super(props);
-    let init_availabilities: Availability[] = [];
-    this.dateRangeValidities = [];
-    for (let i = 0; i < MAX_AVAILABILITIES; i++) {
-      init_availabilities.push({
-        start: new Date(),
-        end: new Date(),
-        hoursPerWeek: HoursAvailableRange._none
-      });
-      this.dateRangeValidities.push(false);
-    }
     this.state = {
-      allAvailabilities: init_availabilities,
-      numAvailabilities: 1
+      availabilities: []
     }
     this.removeAvailabilityField = this.removeAvailabilityField.bind(this);
     this.addAvailabilityField = this.addAvailabilityField.bind(this);
     this.teardown = this.teardown.bind(this);
   }
 
+  private defaultAvailability(): rangeWithValidity {
+    return {
+      validity: false, // because the end date is not strictly after the start date
+      availability: {
+        start: new Date(),
+        end: new Date(),
+        hoursPerWeek: HoursAvailableRange._none
+      }
+    }
+  }
+
   /**
-   * Removes the last availability field from the render.
+   * Returns the [idx]th availability in the state.
+   */
+  private getAvail(idx: number): Availability {
+    return this.state.availabilities[idx].availability;
+  }
+
+  /**
+   * Removes the [idx]th availability field from the render.
    * @throws RangeError if there is currently only one availability field.
    */
-  private removeAvailabilityField(): void {
-    if (this.state.allAvailabilities.length <= 1) {
-      throw RangeError("Must have at least 1 availability field");
-    }
-    this.setState(state => ({
-      numAvailabilities: state.numAvailabilities - 1
-    }));
+  private removeAvailabilityField(idx: number): void {
+    this.setState(state => {
+      let newAvailabilities = [...state.availabilities];
+      newAvailabilities.splice(idx, 1);
+      return { availabilities: newAvailabilities }
+    });
   }
 
   /**
@@ -85,21 +87,31 @@ export class EnterAvailability extends React.Component<EnterAvailabilityProps, E
    * availability fields.
    */
   private addAvailabilityField(): void {
-    if (this.state.numAvailabilities >= MAX_AVAILABILITIES) {
-      throw RangeError(`Can't add more than ${this.state.numAvailabilities} availability fields`);
+    let numAvailabilities = this.state.availabilities.length;
+    if (numAvailabilities >= MAX_AVAILABILITIES) {
+      throw RangeError(`Can't add more than ${numAvailabilities} availability fields`);
     }
     this.setState(state => ({
-      numAvailabilities: state.numAvailabilities + 1
+      availabilities: [...state.availabilities, this.defaultAvailability()]
     }));
   }
 
   /**
-   * True iff each availability that will be submitted has a start date
+   * True iff the [idx]th availability has a start date
+   * earlier than its end date.
+   */
+  private rangeIsValid(idx: number) {
+    return this.state.availabilities[idx].validity;
+  }
+
+  /**
+   * True iff each availability in the current state has a start date
    * earlier than its end date.
    */
   private dateRangesAreValid(): boolean {
-    return this.dateRangeValidities.reduce(
-      (acc, curr, availabilityIdx) => acc && (curr || availabilityIdx > this.state.numAvailabilities)
+    return this.state.availabilities.reduce(
+      (acc, curr) => acc && curr.validity,
+      true
     );
   }
 
@@ -131,27 +143,27 @@ export class EnterAvailability extends React.Component<EnterAvailabilityProps, E
     let isStart: boolean = startOrEnd == "start";
     let setDate = (isStart: boolean, availabilityIdx: number, date: Date) =>
       this.setState(state => {
-        let availabilities = state.allAvailabilities;
-        availabilities[availabilityIdx][isStart ? "start" : "end"] = date;
+        let availabilities = state.availabilities;
+        availabilities[availabilityIdx].availability[isStart ? "start" : "end"] = date;
         return {
-          allAvailabilities: availabilities
+          availabilities: availabilities
         };
       });
     let validate = (newStartDate: Date) => { // if isStart
-      let endDate = this.state.allAvailabilities[availabilityIdx].end;
-      return newStartDate < endDate
+      let endDate = this.getAvail(availabilityIdx).end;
+      return newStartDate < endDate;
     };
     if (!isStart) {
       validate = (newEndDate: Date) => { // if !isStart
-        let startDate = this.state.allAvailabilities[availabilityIdx].end;
+        let startDate = this.getAvail(availabilityIdx).end;
         return newEndDate > startDate
       };
     }
     return <DatePicker
-      selected={this.state.allAvailabilities[availabilityIdx][isStart ? "start" : "end"]}
+      selected={this.getAvail(availabilityIdx)[isStart ? "start" : "end"]}
       onChange={date => {
         setDate(isStart, availabilityIdx, date);
-        this.dateRangeValidities[availabilityIdx] = validate(date);
+        this.state.availabilities[availabilityIdx].validity = validate(date);
       }}
     />;
   }
@@ -167,14 +179,14 @@ export class EnterAvailability extends React.Component<EnterAvailabilityProps, E
         throw TypeError(`"${hours}" is not a valid range of available hours.`);
       }
       this.setState(state => {
-        let availabilities = state.allAvailabilities;
-        availabilities[idx].hoursPerWeek = hours;
+        let availabilities = state.availabilities;
+        availabilities[idx].availability.hoursPerWeek = hours;
         return {
-          allAvailabilities: availabilities
+          availabilities: availabilities
         };
       });
     }
-    return <select value={this.state.allAvailabilities[availabilityIdx].hoursPerWeek} className={`${bs["align-middle"]}`}
+    return <select value={this.state.availabilities[availabilityIdx].availability.hoursPerWeek} className={`${bs["align-middle"]}`}
       onChange={value => updateHours(availabilityIdx, value.target.value as HoursAvailableRange)}>
       <option value={HoursAvailableRange._none} disabled>{HoursAvailableRange._none}</option>
       <option value={HoursAvailableRange._1_to_9}>{HoursAvailableRange._1_to_9}</option>
@@ -186,7 +198,7 @@ export class EnterAvailability extends React.Component<EnterAvailabilityProps, E
   }
 
   private renderTimeRangeErrMsg(availabilityIdx: number): JSX.Element {
-    if (this.dateRangeValidities[availabilityIdx]) {
+    if (this.rangeIsValid(availabilityIdx)) {
       return <></>;
     }
     return <>
@@ -211,8 +223,12 @@ export class EnterAvailability extends React.Component<EnterAvailabilityProps, E
     return <>
       <div className={`${bs.row} ${index["superpowers-row"]}`} key={`availability-field-header-${availabilityIdx}`}>
         <div>
-          Time Frame #{availabilityIdx}
+          Time Frame #{availabilityIdx + 1}
         </div>
+        <button className={`${bs.btn} ${bs["btn-danger"]}`}
+          onClick={() => this.removeAvailabilityField(availabilityIdx)}>
+          X
+        </button>
       </div>
       <div className={bs.row} key={`availability-field-labels-${availabilityIdx}`}>
         <div className={bs["col-3"]} style={{ textAlign: "start" }}>
@@ -241,30 +257,27 @@ export class EnterAvailability extends React.Component<EnterAvailabilityProps, E
   }
 
   private teardown() {
-    this.props.updateInfo([...this.state.allAvailabilities].splice(0, this.state.numAvailabilities));
+    this.props.updateInfo([...this.state.availabilities].map(a => a.availability));
   }
 
   // TODO disable next button if any hours/week was not selected
   render() {
     console.log("availabilities:");
-    console.log(this.state.allAvailabilities)
+    console.log(this.state.availabilities)
     return <>
       <div className={`${bs['col-lg-12']} ${bs['col-md-12']} ${bs['text-center']}`}>
         {this.headRender}
         <div className={bs.row}>
           <div className={`${bs['col-lg-12']} ${bs['col-md-12']}`}>
-            {[...Array(this.state.numAvailabilities).keys()].map(
+            {this.state.availabilities.map(
               (_, idx) => this.renderAvailabilityField(idx)
             )}
           </div>
         </div>
         <div className={bs.row}>
-          <button className={`${bs.btn} ${bs["btn-danger"]}`}
-            onClick={this.removeAvailabilityField}
-            disabled={this.state.numAvailabilities <= 1}>Remove an availability</button>
           <button className={`${bs.btn} ${bs["btn-primary"]}`}
             onClick={this.addAvailabilityField}
-            disabled={this.state.numAvailabilities >= 3}>Add an availability</button>
+            disabled={this.state.availabilities.length >= 3}>Add an availability</button>
         </div>
         <div className={bs.row}>
           <div className={index.spacer}></div>
