@@ -10,6 +10,7 @@ import { EnterSkills } from './createProfileComponents/skill';
 import { Superpowers } from './createProfileComponents/superpowers';
 
 const stageOrder = [
+  "availability",
   "superpower",
   "skill",
   "user_creds",
@@ -18,8 +19,7 @@ const stageOrder = [
   "school",
   "visa",
   "expertise",
-  "resume",
-  "availability"
+  "resume"
 ] as const;
 
 if ((new Set(stageOrder)).size != stageOrder.length) {
