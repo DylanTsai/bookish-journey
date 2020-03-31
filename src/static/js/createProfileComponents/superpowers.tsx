@@ -7,25 +7,31 @@ import index from '../../styles/index.css';
 import styleConsts from '../../styles/constants.css';
 import { clJoin } from '../stringUtils';
 
+export enum Superpower {
+  Engineering = "Engineering",
+  Marketing = "Marketing",
+  Business = "Business",
+}
+
 type catData = {
-  name: string,
+  name: Superpower,
   imgUrl: string,
   isSelected: boolean
 }
 
 const initCategories: catData[] = [
   {
-    name: "Engineering",
+    name: Superpower.Engineering,
     imgUrl: "https://via.placeholder.com/100",
     isSelected: false
   },
   {
-    name: "Marketing",
+    name: Superpower.Marketing,
     imgUrl: "https://via.placeholder.com/100",
     isSelected: false
   },
   {
-    name: "Business",
+    name: Superpower.Business,
     imgUrl: "https://via.placeholder.com/100",
     isSelected: false
   }
@@ -70,34 +76,34 @@ export class Superpowers extends React.Component<SuperpowersProps, SuperpowersSt
     let nextBtn = this.props.renderNextBut(teardown, "Next", false);
 
     return <>
-      <div className={clJoin({'bs': ['col-lg-12', 'col-md-12', 'text-center']})}>
+      <div className={clJoin({ 'bs': ['col-lg-12', 'col-md-12', 'text-center'] })}>
         <div className={bs.row}>
-          <div id="top-icon" className={clJoin({'bs': ['col-lg-12', 'col-md-12']})}>
-            <img src="https://via.placeholder.com/100"/>
+          <div id="top-icon" className={clJoin({ 'bs': ['col-lg-12', 'col-md-12'] })}>
+            <img src="https://via.placeholder.com/100" />
           </div>
         </div>
-        <div className={clJoin({'bs': ['row'], 'index': ['superpowers-row']})}>
-          <div className={clJoin({'bs': ['col-lg-12', 'col-md-12']})}>
+        <div className={clJoin({ 'bs': ['row'], 'index': ['superpowers-row'] })}>
+          <div className={clJoin({ 'bs': ['col-lg-12', 'col-md-12'] })}>
             <h3>Tell us about your superpowers and<br /> positions of interest</h3>
           </div>
         </div>
         {
           this.state.catsByRow.map((row, rowIdx) =>
-            <div className={clJoin({'bs': ['row'], 'index': ['superpowers-row']})}>
+            <div className={clJoin({ 'bs': ['row'], 'index': ['superpowers-row'] })}>
               {
                 row.map((category, colIdx) => {
                   let selectedClass = category.isSelected ? index['power-card-selected'] : index['power-card'];
                   let toggleSelect = () => this.toggleSelection(rowIdx, colIdx);
 
-                  return <div className={clJoin({'bs': ['col-lg-4', 'col-md-4']})}>
-                    <div className={clJoin({'bs': ['card', 'shadow']}) + ' ' + selectedClass} onClick={toggleSelect}>
-                      <div className={clJoin({'bs': ['card-body', 'text-center', 'd-flex', 'flex-column', 'justify-content-between']})}>
-                        <div style={{height: "100px"}}>
-                        {
-                          category.isSelected
-                          ? <CheckCircleOutlineIcon style={{color: "#17b298", fontSize: 90}}/>
-                          : <img src={category.imgUrl}/>
-                        }  
+                  return <div className={clJoin({ 'bs': ['col-lg-4', 'col-md-4'] })}>
+                    <div className={clJoin({ 'bs': ['card', 'shadow'] }) + ' ' + selectedClass} onClick={toggleSelect}>
+                      <div className={clJoin({ 'bs': ['card-body', 'text-center', 'd-flex', 'flex-column', 'justify-content-between'] })}>
+                        <div style={{ height: "100px" }}>
+                          {
+                            category.isSelected
+                              ? <CheckCircleOutlineIcon style={{ color: "#17b298", fontSize: 90 }} />
+                              : <img src={category.imgUrl} />
+                          }
                         </div>
                         <h6>{category.name}</h6>
                       </div>
@@ -112,12 +118,12 @@ export class Superpowers extends React.Component<SuperpowersProps, SuperpowersSt
           <div className={index.spacer}></div>
         </div>
         <div className={bs.row}>
-          <div className={clJoin({'bs': ['col-lg-12', 'col-md-12'], 'index': ['superpowers-row']})}>
-            <button className={clJoin({'bs': ['btn', 'btn-link']})}>
+          <div className={clJoin({ 'bs': ['col-lg-12', 'col-md-12'], 'index': ['superpowers-row'] })}>
+            <button className={clJoin({ 'bs': ['btn', 'btn-link'] })}>
               <KeyboardArrowLeftOutlinedIcon />
               Back
             </button>
-            { nextBtn }
+            {nextBtn}
           </div>
         </div>
       </div>

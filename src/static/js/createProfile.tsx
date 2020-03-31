@@ -6,7 +6,7 @@ import index from '../styles/index.css';
 import { SymbaToolbar } from './symbaToolbar';
 import { CreateUserCreds } from './createProfileComponents/createUserCreds';
 import { EnterAvailability, Availability } from './createProfileComponents/availability';
-import { EnterSkills } from './createProfileComponents/skill';
+import { EnterSkills, skill } from './createProfileComponents/skill';
 import { Superpowers } from './createProfileComponents/superpowers';
 import { clJoin } from './stringUtils';
 
@@ -98,7 +98,7 @@ type createProfileState = {
   stage: stageOpt,
   email: null | string,
   pw: null | string,
-  skills: string[],
+  skills: skill[],
   availability: null | Availability[],
   selectedCats: string[]
 }
@@ -145,7 +145,7 @@ class CreateProfile extends React.Component<{}, createProfileState> {
    */
   renderNextBut(teardown: () => void, titleTxt: string, isDisabled: boolean) {
     return <button
-      className={clJoin({'bs': ['btn', 'btn-info'], 'index': ['navNextBtn']})}
+      className={clJoin({ 'bs': ['btn', 'btn-info'], 'index': ['navNextBtn'] })}
       disabled={isDisabled}
       onClick={() => { teardown(); this.navigator.navToNext() }}>
       {titleTxt}
@@ -190,7 +190,7 @@ class CreateProfile extends React.Component<{}, createProfileState> {
         break;
     }
 
-    return <div className={clJoin({'bs': ['row', 'w-100']})}>{bodyElement}</div>;
+    return <div className={clJoin({ 'bs': ['row', 'w-100'] })}>{bodyElement}</div>;
   }
 }
 

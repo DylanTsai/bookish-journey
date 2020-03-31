@@ -14,7 +14,7 @@ export type EnterSkillsProps = {
 
 class SymbaXBtn extends React.Component {
   render() {
-    return <CancelIcon style={{color: 'white', padding: '0px'}}/>;
+    return <CancelIcon style={{ color: 'white', padding: '0px' }} />;
   }
 }
 
@@ -57,10 +57,10 @@ export class EnterSkills extends React.Component<EnterSkillsProps, {}> {
    */
   get headRender(): JSX.Element {
     return <>
-      <div className={clJoin({bs: ['row', 'justify-content-center']})}>
+      <div className={clJoin({ bs: ['row', 'justify-content-center'] })}>
         <img src="https://via.placeholder.com/100" />
       </div>
-      <div className={clJoin({'bs': ['row', 'flex-column', 'justify-content-center', 'text-center']})}>
+      <div className={clJoin({ 'bs': ['row', 'flex-column', 'justify-content-center', 'text-center'] })}>
         <h4>Add some of the skills that relate to your <br /> expertise</h4>
         <span style={{ fontSize: 12 }}>Choose as many as you like. You can always add more later.</span>
       </div>
@@ -75,9 +75,9 @@ export class EnterSkills extends React.Component<EnterSkillsProps, {}> {
    * @param setPopupVisibility - sets visibility of the options popup.
    */
   private renderInputBox(
-      onInputChange: (input: string) => void,
-      anchorRef: React.RefObject<HTMLInputElement>,
-      setPopupVisibility: (b: boolean) => void): Element {
+    onInputChange: (input: string) => void,
+    anchorRef: React.RefObject<HTMLInputElement>,
+    setPopupVisibility: (b: boolean) => void): Element {
     let onChange = (ev) => {
       let val = ev.target.value;
       onInputChange(val);
@@ -103,11 +103,12 @@ export class EnterSkills extends React.Component<EnterSkillsProps, {}> {
    */
   private renderOption(skill: skill, isFocused: boolean): JSX.Element {
     return <span style={{
-          background: isFocused ? '#f2f2f4' : 'white', color: '#97', padding: '5px 10px',
-          position: 'absolute', width: '100%', height: '100%', fontFamily: 'Open Sans', fontSize: 14,
-          display: 'flex', alignItems: 'center'}}>
+      background: isFocused ? '#f2f2f4' : 'white', color: '#97', padding: '5px 10px',
+      position: 'absolute', width: '100%', height: '100%', fontFamily: 'Open Sans', fontSize: 14,
+      display: 'flex', alignItems: 'center'
+    }}>
       {skill}
-     </span>
+    </span>
   }
 
   /**
@@ -127,11 +128,11 @@ export class EnterSkills extends React.Component<EnterSkillsProps, {}> {
       </span>
     </div>
   }
- 
+
   render() {
-    return <div className={clJoin({'bs': ['col-lg-12', 'col-md-12', 'flex-column'], 'index': ['skillsContainer']})}>
+    return <div className={clJoin({ 'bs': ['col-lg-12', 'col-md-12', 'flex-column'], 'index': ['skillsContainer'] })}>
       {this.headRender}
-      <div className={clJoin({'bs': ['row', 'justify-content-center']})} style={{ height: 100 }}>
+      <div className={clJoin({ 'bs': ['row', 'justify-content-center'] })} style={{ height: 100 }}>
         <TypeAheadView
           model={this.typeAheadModel}
           renderOption={this.renderOption}
