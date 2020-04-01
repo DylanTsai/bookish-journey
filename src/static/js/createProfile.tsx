@@ -134,7 +134,9 @@ class CreateProfile extends React.Component<{}, createProfileState> {
   }
 
   componentDidUpdate() {
-
+    if (this.state.stage == "expertise" && this.state.selectedCats.length == 0) {
+      this.navigator.navToNext();
+    }
   }
 
   /**
@@ -180,8 +182,7 @@ class CreateProfile extends React.Component<{}, createProfileState> {
         break;
       case "expertise":
         if (this.state.selectedCats.length == 0) {
-          this.navigator.navToNext();
-          return <></>;
+          return <></>; // componentDidUpdate will call this.navigator.navToNext();
         }
         updateInfo = (concentrations: concentration[]) => this.setState({ selectedConcentrations: concentrations });
         bodyElement = <Concentration updateInfo={updateInfo}

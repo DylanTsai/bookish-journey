@@ -427,6 +427,7 @@ export class TypeAheadView<optionT, inputBoxT extends Element>
       )}
       onEnterSelect={this.props.model.clearInput}
       isLoading={() => this.props.model.isFetching}
+      shouldHidePopup={() => this.props.model.input.length == 0}
       virtualizedListProps={{
         height: 100,
         rowHeight: 40,

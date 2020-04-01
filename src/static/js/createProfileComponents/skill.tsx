@@ -5,7 +5,7 @@ import CancelIcon from '@material-ui/icons/Cancel';
 import { TypeAheadModel, TypeAheadView, TypeAheadSelectionRenderHelpers, TextInputMonitor } from '../textUtils';
 import { clJoin } from '../stringUtils';
 
-type skill = string;
+export type skill = string;
 
 export type EnterSkillsProps = {
   updateInfo: (skills: string[]) => void,
