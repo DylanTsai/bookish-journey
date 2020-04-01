@@ -1,14 +1,14 @@
 import connectToDB as ctdb
 
 
-def write_user_info():
 
+
+def write_user_info(id,password,country,school,visa,state,city,fname,lname,language,start,end,hours,interest,skill):
     """
     Function that Writes user inputted information to database
     Uses connectToDB module to manage connecting to the database
     Does not Return Anything
     """
-
     # Connect to DB
     db = ctdb.get_db()
     cur = db.cursor()
@@ -25,7 +25,7 @@ def write_user_info():
         #Time Frame Table
         insert_time_frame(cur,id,start,end,hours)
         # Intrest Table
-        insert_intrest(cur,id,intrest)
+        insert_intrest(cur,id,interest)
         # Skill Table
         insert_intern_skill(cur,id,skill)
         # Commit to datatables 
