@@ -13,6 +13,8 @@ import { Concentration, concentration } from './createProfileComponents/concentr
 
 const stageOrder = [
   "superpower",
+  "expertise",
+  "availability",
   "skill",
   "user_creds",
   "welcome",
