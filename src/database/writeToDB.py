@@ -1,8 +1,5 @@
 import connectToDB as ctdb
 
-
-
-
 def write_user_info(id,password,country,school,visa,state,city,fname,lname,language,start,end,hours,interest,skill):
     """
     Function that Writes user inputted information to database
