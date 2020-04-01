@@ -54,6 +54,7 @@ CREATE TABLE "InternProfile" (
   "major_2" int,
   "minor_1" int,
   "minor_2" int,
+  "visa_status" varchar(100),
   "self_intro" varchar(500),
   "resume_fpath" varchar(500),
   "symba_challenge_points" int
@@ -327,8 +328,8 @@ INSERT INTO "public"."Country" ("country_id", "name") VALUES ('7', 'Germany');
 
 --Insert into Intern
 --Note here that we don't need to insert anything to major 2 if he doesnt have it
-INSERT INTO "public"."InternProfile" ("intern_id", "last_name", "first_name", "email", "country", "state", "city", "local_time_zone", "college_education", "major_1", "minor_1", "self_intro", "resume_fpath", "symba_challenge_points") VALUES ('1', 'Zhihao', 'Tang', 'zt222@cornell.edu', '1', 'NY', 'Ithaca', '-4', 'Cornell University', '1', '3', 'test', 'https://www.linkedin.com/in/zhihao-tang/', '0');
-INSERT INTO "public"."InternProfile" ("intern_id", "last_name", "first_name", "email", "country", "state", "city", "local_time_zone", "college_education", "major_1", "major_2", "self_intro", "resume_fpath", "symba_challenge_points") VALUES ('2', 'Eric', 'Ma', 'eric@cornell.edu', '1', 'NY', 'Ithaca', '-4', 'Cornell University', '4', '6', 'test_for_eric', 'https://github.com/ZTang813', '0');
+INSERT INTO "public"."InternProfile" ("intern_id", "last_name", "first_name", "email", "country", "state", "city", "local_time_zone", "college_education", "major_1", "minor_1", "visa_status","self_intro", "resume_fpath", "symba_challenge_points") VALUES ('1', 'Zhihao', 'Tang', 'zt222@cornell.edu', '1', 'NY', 'Ithaca', '-4', 'Cornell University', '1', '3', 'F-1 Student' ,'test', 'https://www.linkedin.com/in/zhihao-tang/', '0');
+INSERT INTO "public"."InternProfile" ("intern_id", "last_name", "first_name", "email", "country", "state", "city", "local_time_zone", "college_education", "major_1", "major_2", "visa_status","self_intro", "resume_fpath", "symba_challenge_points") VALUES ('2', 'Eric', 'Ma', 'eric@cornell.edu', '1', 'NY', 'Ithaca', '-4', 'Cornell University', '4', '6', 'Resident','test_for_eric', 'https://github.com/ZTang813', '0');
 
 --Insert into Intern credentials
 INSERT INTO "public"."InternCredentials" ("intern", "password") VALUES ('1', 'tzhpassword1');
