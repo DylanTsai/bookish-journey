@@ -14,10 +14,6 @@ def write_user_info():
     cur = db.cursor()
     
     if checkEmail(cur,id):
-        
-
-
-
         # Credentials Table
         insert_user_creds(cur,id,password)
         # Profile Table
@@ -32,9 +28,6 @@ def write_user_info():
         insert_intrest(cur,id,intrest)
         # Skill Table
         insert_intern_skill(cur,id,skill)
-
-
-
         # Commit to datatables 
         db.commit()
         #Close Communication
