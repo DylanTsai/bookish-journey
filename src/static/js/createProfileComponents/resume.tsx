@@ -4,6 +4,7 @@ import S3FileUpload from 'react-s3';
 import ReactS3 from 'react-s3';
 import {uploadFile} from 'react-s3';
 
+
 const config = {
     bucketName: 'symbabucket',
     dirName: '', /* optional */
