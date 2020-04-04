@@ -5,10 +5,10 @@ import ReactS3 from 'react-s3';
 
 const config = {
     bucketName: 'symbabucket',
-    dirName: '', /* optional */
+    dirName: 'test', /* optional */
     region: 'us-east-2',
-    accessKeyId: 'AKIAJTWFNLFMNLTMI6CQ',
-    secretAccessKey: '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',
+    accessKeyId: 'AKIAJ3UH47GMOD76NT7Q',
+    secretAccessKey: '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',
 }
 
 export type ResumeProps = {
