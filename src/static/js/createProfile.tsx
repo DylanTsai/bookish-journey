@@ -10,6 +10,8 @@ import { EnterSkills, skill } from './createProfileComponents/skill';
 import { Superpowers, Superpower } from './createProfileComponents/superpowers';
 import { clJoin } from './stringUtils';
 import { Concentration, concentration } from './createProfileComponents/concentration';
+import { ResumeUpload } from './createProfileComponents/resume';
+
 
 const stageOrder = [
   "superpower",
@@ -102,7 +104,8 @@ type createProfileState = {
   skills: skill[],
   availability: null | Availability[],
   selectedCats: Superpower[],
-  selectedConcentrations: concentration[]
+  selectedConcentrations: concentration[],
+  resumeUploaded: boolean
 }
 
 class CreateProfile extends React.Component<{}, createProfileState> {
@@ -117,7 +120,8 @@ class CreateProfile extends React.Component<{}, createProfileState> {
       skills: [],
       availability: null,
       selectedCats: [],
-      selectedConcentrations: []
+      selectedConcentrations: [],
+      resumeUploaded: false
     };
     this.navigator = new CreateProfileNavigator(
       () => this.state.stage,
@@ -193,7 +197,7 @@ class CreateProfile extends React.Component<{}, createProfileState> {
         bodyElement = <EnterSkills updateInfo={skills => this.setState({ skills: skills })} renderSubmitBtn={this.renderNextBut} />
         break;
       case "resume":
-        throw Error("UNIMPLEMENTED");
+        bodyElement = <ResumeUpload updateInfo={resumeUploaded => this.setState({ resumeUploaded: resumeUploaded })} renderSubmitBtn={this.renderNextBut} />
         break;
       case "availability":
         updateInfo = (availability: Availability[]) => this.setState({ availability: availability });

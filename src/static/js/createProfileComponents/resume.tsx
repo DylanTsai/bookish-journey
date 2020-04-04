@@ -1,9 +1,7 @@
 import React,{Component} from 'react';
 import ReactDom from 'react-dom';
-import S3FileUpload from 'react-s3';
 import ReactS3 from 'react-s3';
-import {uploadFile} from 'react-s3';
-
+// S3FileUpload ,ReactS3, uploadFile
 
 const config = {
     bucketName: 'symbabucket',
@@ -12,6 +10,11 @@ const config = {
     accessKeyId: 'AKIAJTWFNLFMNLTMI6CQ',
     secretAccessKey: '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',
 }
+
+export type ResumeProps = {
+    updateInfo: (resumeUploaded: boolean) => void,
+    renderSubmitBtn: (teardown: () => void, titleTxt: string, isDisabled: boolean) => JSX.Element
+  }
 
 /*
 S3FileUpload
@@ -30,19 +33,20 @@ S3FileUpload
    * }
    */
 
-class Home extends Component{
-    constructor(){
-        super();
+export class ResumeUpload extends Component<ResumeProps, {}> {
+    constructor(props){
+        super(props);
     }
     upload(e){
         console.log(e.target.files[0]);
         ReactS3.upload(e.target.files[0], config)
             .then( (data)=>{
                 console.log(data.location);
-                
+                this.props.updateInfo(true);
             })
             .catch( (err) =>{
                 alert(err);
+                this.props.updateInfo(false);
             })
     }
     render() {
