@@ -14,16 +14,17 @@ import { ResumeUpload } from './createProfileComponents/resume';
 
 
 const stageOrder = [
+  "resume",
+  "skill",
   "superpower",
   "expertise",
   "availability",
-  "skill",
   "user_creds",
   "welcome",
   "location",
   "school",
-  "visa",
-  "resume"
+  "visa"
+  
 ] as const;
 
 if ((new Set(stageOrder)).size != stageOrder.length) {
@@ -197,7 +198,8 @@ class CreateProfile extends React.Component<{}, createProfileState> {
         bodyElement = <EnterSkills updateInfo={skills => this.setState({ skills: skills })} renderSubmitBtn={this.renderNextBut} />
         break;
       case "resume":
-        bodyElement = <ResumeUpload updateInfo={resumeUploaded => this.setState({ resumeUploaded: resumeUploaded })} renderSubmitBtn={this.renderNextBut} />
+        bodyElement = <ResumeUpload/>
+        //bodyElement = <ResumeUpload updateInfo={resumeUploaded => this.setState({ resumeUploaded: resumeUploaded })} renderSubmitBtn={this.renderNextBut} />
         break;
       case "availability":
         updateInfo = (availability: Availability[]) => this.setState({ availability: availability });
