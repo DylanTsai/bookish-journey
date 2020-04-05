@@ -1,6 +1,3 @@
-#!/usr/bin/env bash
-
-
 : <<'long_comment'
 Requirements:
 - Bash 4+
@@ -8,7 +5,7 @@ Requirements:
 - fswatch (available on brew)
 - unbuffer (available on brew via `brew install expect`)
 - gnu-sed (available on brew)
-
+- coreutils (available on brew)
 Lots of commands are spawned in the background and aren't properly cleaned up on 
 exit, so please quit by pressing 'q'. If you do quit through some other way,
 (e.g. using ctrl+C), it might be a good idea to run cleanup_devstart.sh.

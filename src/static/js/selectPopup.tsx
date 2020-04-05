@@ -43,6 +43,12 @@ export type SelectPopupProps<optionT, T extends Element> = {
   isLoading?: () => boolean;
 
   /**
+   * When [true], the popup is hidden.
+   * When [false], behavior follows the documentation for [SelectPopup].
+   */
+  shouldHidePopup: () => boolean;
+
+  /**
    * Props for the react-virtualization list that contains the options.
    */
   virtualizedListProps: StrictOmit<ListPropsOmitGridCoreProps, "rowCount"
@@ -235,8 +241,13 @@ export class SelectPopup<optionT, anchorT extends Element>
 
     let width = this.anchorRef.current ? this.anchorRef.current.clientWidth : 0;
 
-    let popup = this.props.isLoading && this.props.isLoading() ? <TempLoadingSpinner /> :
-      <List
+    let popup;
+    if (this.props.shouldHidePopup()) {
+      popup = <></>
+    } else if (this.props.isLoading && this.props.isLoading()) {
+      popup = <TempLoadingSpinner /> // TODO this (temporary) loading spinner doesn't work
+    } else {
+      popup = <List
         {...this.props.virtualizedListProps}
         rowRenderer={this.renderOptionContainer}
         rowCount={this.props.options.length}
@@ -244,6 +255,7 @@ export class SelectPopup<optionT, anchorT extends Element>
         width={width}
         noRowsRenderer={this.renderEmptyContainer}
       />;
+    }
     return <>
       {anchor}
       {popup}
