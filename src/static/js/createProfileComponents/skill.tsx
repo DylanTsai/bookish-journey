@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import bs from 'bootstrap/dist/css/bootstrap.min.css';
 import index from '../../styles/index.css';
 import CancelIcon from '@material-ui/icons/Cancel';
