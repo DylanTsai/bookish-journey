@@ -11,9 +11,11 @@ import { Superpowers, Superpower } from './createProfileComponents/superpowers';
 import { clJoin } from './stringUtils';
 import { Concentration, concentration } from './createProfileComponents/concentration';
 import { ResumeUpload } from './createProfileComponents/resume';
+import {EnterVisa,VisaStatusProps} from './createProfileComponents/visa';
 
 
 const stageOrder = [
+  "visa",
   "resume",
   "skill",
   "superpower",
@@ -22,8 +24,8 @@ const stageOrder = [
   "user_creds",
   "welcome",
   "location",
-  "school",
-  "visa"
+  "school"
+  
   
 ] as const;
 
@@ -106,8 +108,8 @@ type createProfileState = {
   availability: null | Availability[],
   selectedCats: Superpower[],
   selectedConcentrations: concentration[],
-  resumeUploaded: boolean
-}
+  resumeUploaded: boolean,
+  visaStatus: null|string}
 
 class CreateProfile extends React.Component<{}, createProfileState> {
   private readonly navigator: CreateProfileNavigator;
@@ -122,7 +124,8 @@ class CreateProfile extends React.Component<{}, createProfileState> {
       availability: null,
       selectedCats: [],
       selectedConcentrations: [],
-      resumeUploaded: false
+      resumeUploaded: false,
+      visaStatus: null
     };
     this.navigator = new CreateProfileNavigator(
       () => this.state.stage,
@@ -179,7 +182,8 @@ class CreateProfile extends React.Component<{}, createProfileState> {
         throw Error("UNIMPLEMENTED");
         break;
       case "visa":
-        throw Error("UNIMPLEMENTED");
+        updateInfo = (visaStatus: string) => this.setState({ selectedCats });
+        bodyElement = <EnterVisa updateInfo={updateInfo} renderNextBut={this.renderNextBut} />
         break;
       case "superpower":
         updateInfo = (selectedCats: Superpower[]) => this.setState({ selectedCats });
