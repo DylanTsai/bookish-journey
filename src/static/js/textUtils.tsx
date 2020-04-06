@@ -180,7 +180,7 @@ export class TypeAheadModel<optionT> {
     this.optionEq = optionEq;
     this._input = initInput;
     this.onTextChange(initInput);
-    this.refreshOptionsOnSelect = this.refreshOptionsOnSelect;
+    this.refreshOptionsOnSelect = refreshOptionsOnSelect;
 
     this.select = this.select.bind(this);
     this.deselect = this.deselect.bind(this);
