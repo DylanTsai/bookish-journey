@@ -2,7 +2,7 @@ import React from 'react';
 import { Key } from 'ts-keycode-enum';
 import { List } from 'react-virtualized';
 import { ListPropsOmitGridCoreProps } from './virtualization'
-import { StrictOmit } from './typeUtils'
+import { StrictOmit, curryOne } from './typeUtils'
 
 // @ts-ignore
 import TempLoadingSpinner from '../assets/symba-full-name.png';
@@ -23,9 +23,10 @@ export type SelectPopupProps<optionT, T extends Element> = {
   renderOption: (opt: optionT, isSelected: boolean) => JSX.Element;
 
   /**
-   * Callback for selecting an option
+   * Callback for selecting an option.
+   * [hidePopup] allows for hiding the popup when an option is selected.
    */
-  select: (opt: optionT) => void;
+  select: (opt: optionT, hidePopup: () => void) => void;
 
   /**
    * The list of options. Defaults to [].
@@ -166,7 +167,7 @@ export class SelectPopup<optionT, anchorT extends Element>
     if (event.keyCode == Key.Enter) {
       if (this.state.focusedIdx < this.props.options.length) {
         event.preventDefault();
-        this.props.select(this.props.options[this.state.focusedIdx]);
+        this.props.select(this.props.options[this.state.focusedIdx], () => this.setVisibility(false));
         if (this.props.onEnterSelect) {
           this.props.onEnterSelect();
         }
@@ -198,7 +199,7 @@ export class SelectPopup<optionT, anchorT extends Element>
     let optionIdx = params.index;
     let option = this.props.options[optionIdx];
     let isFocused = this.state.focusedIdx == optionIdx
-    return <div key={params.key} onClick={() => this.props.select(option)}
+    return <div key={params.key} onClick={() => { this.props.select(option, () => this.setVisibility(false)) }}
       onMouseOver={() => this.setState({ focusedIdx: optionIdx })}
       style={params.style}>
       {this.props.renderOption(option, isFocused)}
@@ -269,3 +270,46 @@ export class SelectPopup<optionT, anchorT extends Element>
     </div >;
   }
 }
+
+export type SelectProps<optionT, selectBoxT extends Element> =
+  (StrictOmit<SelectPopupProps<optionT, selectBoxT>,
+    "renderAnchor" | "select" | "onEnterSelect" | "shouldHidePopup">)
+  & {
+    renderSelectBox: (selection: null | optionT, forwardRef: React.RefObject<selectBoxT>) => selectBoxT;
+  }
+
+type SelectState<optionT> = {
+  selected: null | optionT
+}
+export class Select<optionT, selectBoxT extends Element>
+  extends React.Component<SelectProps<optionT, selectBoxT>, SelectState<optionT>> {
+
+  constructor(props: SelectProps<optionT, selectBoxT>) {
+    super(props);
+    this.state = {
+      selected: null
+    }
+    this.select = this.select.bind(this);
+  }
+
+  private select(opt: optionT) {
+    this.setState({ selected: opt });
+  }
+
+  // private renderSelectionBox(sel: optionT, forwardRef: React.RefObject<selectBoxT>) {
+  //   return this.props.renderSelectBox(sel, forwardRef)
+  // }
+
+  render() {
+    return <>
+      <SelectPopup
+        renderAnchor={curryOne(this.props.renderSelectBox)(this.state.selected)}
+        {...this.props}
+        select={(opt, hidePopup) => { this.select(opt); hidePopup() }}
+        shouldHidePopup={() => false}
+      />
+    </>
+  }
+
+}
+
