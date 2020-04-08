@@ -182,7 +182,7 @@ class CreateProfile extends React.Component<{}, createProfileState> {
         throw Error("UNIMPLEMENTED");
         break;
       case "visa":
-        updateInfo = (visaStatus: string) => this.setState({ selectedCats });
+        updateInfo = (visaStatus: string) => this.setState({visaStatus});
         bodyElement = <EnterVisa updateInfo={updateInfo} renderNextBut={this.renderNextBut} />
         break;
       case "superpower":
