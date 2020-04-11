@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <title>My Page</title>
+ </head>
+
+ <body>
+   <h1> Symba Intern Management Platform</h1>
+   <h3>Dashboard Template</h3>
+   <p>We are Dynamic now!!</p>
+  <form  method="POST" action="/response">
+   Name: <input type="text" name="fname" required><br>
+   Note: <input type="text" name="note" required><br>
+   <input type="submit" value="Submit">
+  </form>
+  {% if name %}
+  <h1>{{name}} says: </h1>
+  {% endif %}
+  {% if note %} 
+  <p>{{note}}</p>
+  {% endif %}
+  <div id="fetch-tester">react goes here!</div>
+  <div id="simple-react-test">react goes here!</div>
+  <div>
+    Select options:
+  </div>
+  <div id="skill-search-box">
+    react goes here!
+  </div>
+</body>
+  <script src="dist/test.bundle.js" type="text/javascript"></script>
+</html>
