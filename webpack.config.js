@@ -5,17 +5,16 @@ const config = {
     plugins: [
         new MiniCssExtractPlugin(),
         new CopyPlugin([
-            { from: 'src/templates' , to: 'dist' },
-            { from: 'src/assets' , to: 'dist/assets' }
+            { from: __dirname + '/src/templates' , to: __dirname + '/dist' },
+            { from: __dirname + '/src/assets' , to: __dirname + '/dist/assets' }
         ])
     ],
     entry: {
-        // TODO: Add a line here for every source file created
         index: __dirname + '/src/ts/app.tsx',
     },
     output: {
-        path: __dirname + '/dist/js',
-        filename: '[name].bundle.js',
+        path: __dirname + '/dist/',
+        filename: 'js/[name].bundle.js',
     },
     resolve: {
         extensions: ['.ts', '.tsx', '.js', '.jsx', '.css']

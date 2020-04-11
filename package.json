@@ -61,6 +61,6 @@
     "react-virtualized": "^9.21.2",
     "ts-keycode-enum": "^1.0.6",
     "webpack": "^4.42.1"
-  }
+  },
   "homepage": "https://dylantsai.github.io/bookish-journey/"
 }
