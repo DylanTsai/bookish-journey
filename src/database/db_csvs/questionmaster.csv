@@ -1,8 +1,0 @@
-questionmaster_id,questiontext,is_active,is_deleted ,created_on,modified_on,created_by,modifeid_by,usertype_id
-715b4dd9-f77f-4dc9-917c-9cce896f514a,Please feel free to add anything else you would like to share here.,t,f,2018-12-20 16:07:07+00,,,,3
-3dcc12ae-527d-4a23-b06e-3500a1012d8c,"Tell us a little about yourself (school , major , hobbies , interests , etc)",t,f,2019-03-07 09:44:40+00,,,,1
-5b0b9031-b6a2-43bf-8200-fd034af63a76,"Tell us a little about yourself (school , major , hobbies , interests , etc)",t,f,2018-08-21 13:29:00+00,,,,4
-de08cbf3-1b6a-4d26-ab17-5fc037db296a,"Tell us a little about yourself (background, school, previous work history, interests, etc.)",t,f,2018-11-01 13:02:02+00,,,,2
-795e9126-6434-472e-b3b1-32f158c32525,What do you want to take away from your internship experience?,t,f,2018-11-01 13:01:14+00,,,,3
-3e35a117-4b66-4404-b80d-f9684de71d7c,What are your goals for this internship?,t,f,2018-11-01 13:00:42+00,,,,3
-06f3e114-83f3-43de-845f-2b3f556d3173,"Tell us a little about yourself (school, major, hobbies, interests, etc)",t,f,2018-11-01 13:00:10+00,,,,3
