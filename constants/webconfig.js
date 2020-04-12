@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const crossProjectInfo_1 = require("./crossProjectInfo");
 let base_url = process.env.NODE_ENV == "production" ?
-    "http://dylantsai.github.io/bookish-journey"
+    "https://dylantsai.github.io/bookish-journey"
     : "http://0.0.0.0:8000";
 function make_template_path(p1, p2) {
     let project = "main";
