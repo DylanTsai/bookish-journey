@@ -5,7 +5,7 @@
     "target": "es6",
     "moduleResolution": "node",
     "sourceMap": true,
-    "outDir": "dist",
+    "outDir": "dist/js",
     "jsx": "react",
     "strictNullChecks": true,
     "plugins": [{ "name": "typescript-plugin-css-modules" }]
