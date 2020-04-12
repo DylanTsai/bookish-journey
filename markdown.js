@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importDefault(require("react"));
 const react_markdown_1 = __importDefault(require("react-markdown"));
-const fs_1 = __importDefault(require("fs"));
 class Markdown extends react_1.default.Component {
     constructor(props) {
         super(props);
@@ -13,13 +12,15 @@ class Markdown extends react_1.default.Component {
             md_text: null
         };
     }
-    onComponentDidMount() {
-        fs_1.default.readFile(this.props.src_fpath, (err, data) => {
-            if (err) {
-                console.log("Error reading file for markdown:");
-                return console.error(err);
-            }
-            this.setState({ md_text: data.toString() });
+    componentDidMount() {
+        let fpath = this.props.src_fpath;
+        fetch(fpath)
+            .then(resp => {
+            return resp.body.getReader().read();
+        })
+            .then((result) => {
+            let decoder = new TextDecoder("utf-8");
+            this.setState({ md_text: decoder.decode(result.value) });
         });
     }
     render() {
